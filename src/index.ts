@@ -1,15 +1,14 @@
 import dotenv from "dotenv";
-import { Client, Intents, VoiceChannel } from "discord.js";
+import { Client, Intents, VoiceChannel, Message } from "discord.js";
 import {
 	AudioPlayerStatus,
 	createAudioPlayer,
-	createAudioResource,
 	entersState,
 	joinVoiceChannel,
-	StreamType,
 	VoiceConnectionStatus,
 } from "@discordjs/voice";
 import { createDiscordJSAdapter } from "./adapter";
+import { downloadMusic } from "./youtube";
 
 dotenv.config();
 
@@ -18,11 +17,13 @@ const client = new Client({
 });
 const musicPlayer = createAudioPlayer();
 
-const playSong = () => {
-	const resource = createAudioResource("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", {
-		inputType: StreamType.Arbitrary,
-	});
-	musicPlayer.play(resource);
+const playSong = async () => {
+	const resource = await downloadMusic();
+	if (resource) {
+		musicPlayer.play(resource);
+	} else {
+		console.log("No resource to play.");
+	}
 	return entersState(musicPlayer, AudioPlayerStatus.Playing, 5e3);
 };
 
@@ -46,12 +47,12 @@ client.on("ready", () => {
 	console.log(`Logged in as ${client.user?.tag}!`);
 });
 
-client.on("messageCreate", async (message) => {
+client.on("messageCreate", async (message: Message) => {
 	if (message.author.bot) {
 		return;
 	}
 
-	await message.reply("Trying to play a recording now.");
+	console.log("Received message: " + message.content);
 
 	const channel = message.member?.voice.channel;
 	if (channel) {
@@ -59,7 +60,6 @@ client.on("messageCreate", async (message) => {
 			const connection = await connectToChannel(channel as VoiceChannel);
 			connection.subscribe(musicPlayer);
 			await playSong();
-			await message.reply("Go!");
 		} catch (err) {
 			console.error(err);
 		}
