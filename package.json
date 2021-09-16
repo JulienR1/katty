@@ -1,0 +1,11 @@
+{
+  "name": "katty",
+  "version": "1.0.0",
+  "description": "Katty will sing for us in our discord channels.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Julien Rousseau",
+  "license": "ISC"
+}
