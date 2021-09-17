@@ -1,14 +1,14 @@
-import { Command } from "./Command";
+import { ICommand } from "./ICommand";
 import { CommandRequest } from "./CommandRequest";
 import { CommandVerb } from "./CommandVerb";
 import { PlayCommand } from "./implementations/PlayCommand";
 
 export class CommandHandler {
 	private static instance: CommandHandler | undefined = undefined;
-	private commands: { [key in CommandVerb]?: Command } = {};
+	private commands: { [key in CommandVerb]?: ICommand } = {};
 
 	private constructor() {
-		const unmappedCommands: Command[] = [new PlayCommand()];
+		const unmappedCommands: ICommand[] = [new PlayCommand()];
 
 		unmappedCommands.reduce((obj, command) => {
 			obj[command.getVerb()] = command;

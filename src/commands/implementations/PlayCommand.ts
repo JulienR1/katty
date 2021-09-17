@@ -1,15 +1,9 @@
-import { Command } from "../Command";
 import { CommandVerb } from "../CommandVerb";
+import { Command } from "../Command";
 
-export class PlayCommand implements Command {
-	private verb: CommandVerb;
-
+export class PlayCommand extends Command {
 	constructor() {
-		this.verb = CommandVerb.PLAY;
-	}
-
-	public getVerb(): CommandVerb {
-		return this.verb;
+		super(CommandVerb.PLAY);
 	}
 
 	public execute(keywords: string[]) {
