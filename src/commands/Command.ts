@@ -1,5 +1,6 @@
-import { CommandVerb } from "./CommandVerb";
+import { GuildMember } from "discord.js";
 import { ICommand } from "./ICommand";
+import { CommandVerb } from "./VerbRegistry";
 
 export abstract class Command implements ICommand {
 	constructor(private verb: CommandVerb) {}
@@ -8,5 +9,5 @@ export abstract class Command implements ICommand {
 		return this.verb;
 	}
 
-	abstract execute(keywords: string[]): void;
+	abstract execute(origin: GuildMember, keywords: string[]): void;
 }

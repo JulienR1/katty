@@ -1,14 +1,24 @@
+import { GuildMember } from "discord.js";
 import * as config from "../config.json";
-import { CommandVerb } from "./CommandVerb";
-import { VerbRegistry } from "./VerbRegistry";
+import { CommandVerb, VerbRegistry } from "./VerbRegistry";
 
 export class CommandRequest {
+	public origin: GuildMember | undefined = undefined;
 	public verb: CommandVerb = CommandVerb.NONE;
 	public keywords: string[] = [];
 
-	constructor(content: string) {
+	constructor(member: GuildMember | null, content: string) {
 		const slicedContent = this.removePrefix(content);
 		this.getCommandContent(slicedContent);
+		this.setOrigin(member);
+	}
+
+	private setOrigin(member: GuildMember | null) {
+		if (member) {
+			this.origin = member;
+		} else {
+			throw new Error("No member was provided.");
+		}
 	}
 
 	private removePrefix(content: string): string {

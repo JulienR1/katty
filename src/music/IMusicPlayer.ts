@@ -1,7 +1,9 @@
+import { VoiceChannel } from "discord.js";
 import { Track } from "./Track";
 
 export interface IMusicPlayer {
-	enqueue(tack: Track): void;
+	joinChannel(channel: VoiceChannel): void;
+	enqueue(channel: VoiceChannel, tack: Track): void;
 	/**
 	 * enqueue
 	 * pause

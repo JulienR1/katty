@@ -16,13 +16,13 @@ export class MessageEvent extends DiscordEvent {
 		katty.on<string>(this.eventName, async (message: Message) => this.onEvent(message));
 	}
 
-	async onEvent({ content, author }: Message): Promise<Awaited<void>> {
+	async onEvent({ member, content, author }: Message): Promise<Awaited<void>> {
 		if (author.bot) {
 			return;
 		}
 
 		try {
-			const request = new CommandRequest(content);
+			const request = new CommandRequest(member, content);
 			CommandHandler.Instance().executeCommand(request);
 		} catch (err) {}
 	}

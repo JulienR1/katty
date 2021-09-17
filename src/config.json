@@ -1,3 +1,6 @@
 {
-	"commandPrefix": "!"
+	"commandPrefix": "!",
+	"voiceCommunication": {
+		"maxLoadTime": 30e3
+	}
 }

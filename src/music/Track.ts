@@ -1,9 +1,17 @@
 import ytdl from "ytdl-core";
 import ytSearch from "yt-search";
+import { Readable } from "stream";
 
 export class Track {
 	private title: string | undefined = undefined;
 	private url: string | undefined = undefined;
+
+	public getStream(): Readable {
+		if (!this.url) {
+			throw new Error("Invalid track.");
+		}
+		return ytdl(this.url, { filter: "audioonly" });
+	}
 
 	public async fromURL(typedUrl: string): Promise<Track> {
 		const youtubeRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/;
