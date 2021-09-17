@@ -1,5 +1,5 @@
 import { Awaited, Client, ClientEvents, Message } from "discord.js";
-import { Command } from "../commands/Command";
+import { CommandRequest } from "../commands/CommandRequest";
 import { CommandHandler } from "../commands/CommandHandler";
 import { DiscordEvent } from "./DiscordEvent";
 
@@ -22,8 +22,8 @@ export class MessageEvent extends DiscordEvent {
 		}
 
 		try {
-			const command = new Command(content);
-			CommandHandler.Instance().executeCommand(command);
+			const request = new CommandRequest(content);
+			CommandHandler.Instance().executeCommand(request);
 		} catch (err) {}
 	}
 }
