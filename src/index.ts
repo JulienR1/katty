@@ -1,6 +1,6 @@
 import { Client, Intents } from "discord.js";
 import dotenv from "dotenv";
-import { bindCommands } from "./commands/DiscordEventHandler";
+import { bindCommands } from "./events/DiscordEventHandler";
 
 dotenv.config();
 
