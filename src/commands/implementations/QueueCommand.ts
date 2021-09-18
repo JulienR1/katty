@@ -1,6 +1,6 @@
-import { GuildMember } from "discord.js";
 import { MusicPlayer } from "../../music/MusicPlayer";
 import { Command } from "../Command";
+import { ICommandDescription } from "../models/ICommandDescription";
 import { CommandVerb } from "../VerbRegistry";
 
 export class QueueCommand extends Command {
@@ -8,7 +8,7 @@ export class QueueCommand extends Command {
 		super(CommandVerb.QUEUE);
 	}
 
-	execute(origin: GuildMember, keywords: string[]): void {
+	public execute(description: ICommandDescription): void {
 		console.log("queue: ", MusicPlayer.Instance().queue());
 	}
 }

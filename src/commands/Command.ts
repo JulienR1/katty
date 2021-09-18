@@ -1,5 +1,5 @@
-import { GuildMember } from "discord.js";
-import { ICommand } from "./ICommand";
+import { ICommand } from "./models/ICommand";
+import { ICommandDescription } from "./models/ICommandDescription";
 import { CommandVerb } from "./VerbRegistry";
 
 export abstract class Command implements ICommand {
@@ -9,5 +9,5 @@ export abstract class Command implements ICommand {
 		return this.verb;
 	}
 
-	abstract execute(origin: GuildMember, keywords: string[]): void;
+	abstract execute(description: ICommandDescription): void;
 }

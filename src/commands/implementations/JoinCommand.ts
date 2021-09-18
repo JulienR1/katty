@@ -1,6 +1,6 @@
-import { GuildMember, VoiceChannel } from "discord.js";
 import { MusicPlayer } from "../../music/MusicPlayer";
 import { Command } from "../Command";
+import { ICommandDescription } from "../models/ICommandDescription";
 import { CommandVerb } from "../VerbRegistry";
 
 export class JoinCommand extends Command {
@@ -8,7 +8,7 @@ export class JoinCommand extends Command {
 		super(CommandVerb.JOIN);
 	}
 
-	public async execute(origin: GuildMember, keywords: string[]) {
-		MusicPlayer.Instance().join(origin.voice.channel as VoiceChannel);
+	public async execute({ member }: ICommandDescription) {
+		MusicPlayer.Instance().join(member.voice.channel);
 	}
 }

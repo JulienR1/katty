@@ -1,4 +1,4 @@
-import { ICommand } from "./ICommand";
+import { ICommand } from "./models/ICommand";
 import { CommandVerb } from "./VerbRegistry";
 import { CommandRequest } from "./CommandRequest";
 import { PlayCommand } from "./implementations/PlayCommand";
@@ -39,9 +39,9 @@ export class CommandHandler {
 
 	public executeCommand(request: CommandRequest) {
 		const command = this.commands[request.verb];
-		if (command && request.origin) {
+		if (command && request.description) {
 			try {
-				command.execute(request.origin, request.keywords);
+				command.execute(request.description);
 			} catch (err) {
 				// TODO: Remove this and actually manage the errors correctly with messages etc.
 				console.error(err);

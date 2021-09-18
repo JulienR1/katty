@@ -1,24 +1,22 @@
-import { GuildMember } from "discord.js";
 import * as config from "../config.json";
+import { ICommandContent } from "./models/ICommandContent";
+import { ICommandDescription } from "./models/ICommandDescription";
 import { CommandVerb, VerbRegistry } from "./VerbRegistry";
 
 export class CommandRequest {
-	public origin: GuildMember | undefined = undefined;
-	public verb: CommandVerb = CommandVerb.NONE;
-	public keywords: string[] = [];
+	public verb: CommandVerb;
+	public description: ICommandDescription;
 
-	constructor(member: GuildMember | null, content: string) {
-		const slicedContent = this.removePrefix(content);
-		this.getCommandContent(slicedContent);
-		this.setOrigin(member);
-	}
+	constructor(commandContent: ICommandContent) {
+		const bareTextContent = this.removePrefix(commandContent.content);
+		const splitTextContent = bareTextContent.split(" ");
 
-	private setOrigin(member: GuildMember | null) {
-		if (member) {
-			this.origin = member;
-		} else {
-			throw new Error("No member was provided.");
-		}
+		this.verb = this.getVerb(splitTextContent.shift());
+		this.description = {
+			channel: commandContent.channel,
+			member: commandContent.member,
+			keywords: splitTextContent,
+		};
 	}
 
 	private removePrefix(content: string): string {
@@ -30,12 +28,6 @@ export class CommandRequest {
 
 	private hasPrefix(content: string): boolean {
 		return content.startsWith(config.commandPrefix);
-	}
-
-	private getCommandContent(content: string): void {
-		const tempKeywords = content.split(" ");
-		this.verb = this.getVerb(tempKeywords.shift());
-		this.keywords = tempKeywords;
 	}
 
 	private getVerb(dirtyVerb: string | undefined): CommandVerb {
