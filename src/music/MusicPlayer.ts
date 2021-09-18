@@ -40,8 +40,13 @@ export class MusicPlayer implements IMusicPlayer {
 	}
 
 	private onSongFinished() {
-		this.trackQueue.shift();
-		this.playSong();
+		try {
+			this.trackQueue.shift();
+			this.playSong();
+		} catch (err) {
+			// TODO: dont be stupid.
+			console.error(err);
+		}
 	}
 
 	private playSong() {
@@ -124,5 +129,9 @@ export class MusicPlayer implements IMusicPlayer {
 		if (this.player.state.status === AudioPlayerStatus.Paused) {
 			this.player.unpause();
 		}
+	}
+
+	public queue() {
+		return JSON.parse(JSON.stringify(this.trackQueue));
 	}
 }

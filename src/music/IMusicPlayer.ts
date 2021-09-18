@@ -3,14 +3,14 @@ import { Track } from "./Track";
 
 export interface IMusicPlayer {
 	join(channel: VoiceChannel): void;
-	enqueue(channel: VoiceChannel, tack: Track): void;
 	leave(): void;
+	enqueue(channel: VoiceChannel, tack: Track): void;
 	play(): void;
 	next(): void;
 	stop(): void;
 	resume(): void;
+	queue(): void;
 	/**
-	 * queue (afficher)
 	 * loop
 	 * seek (in music)
 	 * reorder

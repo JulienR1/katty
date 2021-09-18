@@ -24,6 +24,8 @@ export class MessageEvent extends DiscordEvent {
 		try {
 			const request = new CommandRequest(member, content);
 			CommandHandler.Instance().executeCommand(request);
-		} catch (err) {}
+		} catch (err) {
+			console.log(err);
+		}
 	}
 }

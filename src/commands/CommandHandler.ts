@@ -1,12 +1,13 @@
 import { ICommand } from "./ICommand";
+import { CommandVerb } from "./VerbRegistry";
 import { CommandRequest } from "./CommandRequest";
 import { PlayCommand } from "./implementations/PlayCommand";
 import { JoinCommand } from "./implementations/JoinCommand";
-import { CommandVerb } from "./VerbRegistry";
 import { KickCommand } from "./implementations/KickCommand";
 import { PauseCommand } from "./implementations/PauseCommand";
 import { NextCommand } from "./implementations/NextCommand";
 import { ResumeCommand } from "./implementations/ResumeCommand";
+import { QueueCommand } from "./implementations/QueueCommand";
 
 export class CommandHandler {
 	private static instance: CommandHandler | undefined = undefined;
@@ -20,6 +21,7 @@ export class CommandHandler {
 			new PauseCommand(),
 			new NextCommand(),
 			new ResumeCommand(),
+			new QueueCommand(),
 		];
 
 		unmappedCommands.reduce((obj, command) => {
@@ -38,7 +40,12 @@ export class CommandHandler {
 	public executeCommand(request: CommandRequest) {
 		const command = this.commands[request.verb];
 		if (command && request.origin) {
-			command.execute(request.origin, request.keywords);
+			try {
+				command.execute(request.origin, request.keywords);
+			} catch (err) {
+				// TODO: Remove this and actually manage the errors correctly with messages etc.
+				console.error(err);
+			}
 		} else {
 			console.error("The specified command does not exist.");
 			throw new Error("The specified command does not exist.");
