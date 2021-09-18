@@ -2,5 +2,6 @@
 	"commandPrefix": "!",
 	"voiceCommunication": {
 		"maxLoadTime": 30e3
-	}
+	},
+	"language": "fr"
 }

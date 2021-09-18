@@ -1,9 +1,17 @@
 import dotenv from "dotenv";
+import i18n from "i18n";
+import * as config from "./config.json";
 import { BitFieldResolvable, Client, Intents, IntentsString } from "discord.js";
 import { DiscordEventHandler } from "./events/DiscordEventHandler";
-import { CommandHandler } from "./commands/CommandHandler";
+import path from "path/posix";
 
 dotenv.config();
+
+i18n.configure({
+	locales: ["en", "fr"],
+	directory: path.join(__dirname, "lang"),
+});
+i18n.setLocale(config.language);
 
 const intents: BitFieldResolvable<IntentsString, number> = [
 	Intents.FLAGS.GUILDS,
