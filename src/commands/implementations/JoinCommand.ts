@@ -9,6 +9,6 @@ export class JoinCommand extends Command {
 	}
 
 	public async execute(origin: GuildMember, keywords: string[]) {
-		MusicPlayer.Instance().joinChannel(origin.voice.channel as VoiceChannel);
+		MusicPlayer.Instance().join(origin.voice.channel as VoiceChannel);
 	}
 }
