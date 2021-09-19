@@ -28,7 +28,7 @@ export class QueueCommand extends Command {
 		const queueEmbed = new SuccessEmbed();
 		queueEmbed.setTitle(i18n.__("queue.title"));
 		queueEmbed.setThumbnail(queue[0].thumbnailURL || "");
-		queueEmbed.addField("Now", songsEmbed[0].value, false);
+		queueEmbed.addField(i18n.__("queue.now"), songsEmbed[0].value, false);
 		queueEmbed.addFields(songsEmbed.splice(1, config.songsToDisplayInQueue));
 		queueEmbed.setFooter(i18n.__("queue.nextNSongs", { songCount: config.songsToDisplayInQueue.toString() }));
 
