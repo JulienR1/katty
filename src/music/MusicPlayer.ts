@@ -13,6 +13,7 @@ import { createDiscordJSAdapter } from "../voiceAdapter/JsAdapter";
 import { IMusicPlayer } from "./IMusicPlayer";
 import { Track } from "./Track";
 import * as config from "./../config.json";
+import { CommandVerb } from "../commands/VerbRegistry";
 
 export class MusicPlayer implements IMusicPlayer {
 	private static instance: MusicPlayer | undefined;
@@ -23,11 +24,19 @@ export class MusicPlayer implements IMusicPlayer {
 
 	private currentChannelId = "-1";
 
+	private songEndErrorListeners: { [key in CommandVerb]?: () => void } = {};
+
 	private constructor() {
 		this.player = createAudioPlayer();
 		this.player.on("stateChange", (oldState, newState) => {
 			if (newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
-				this.onSongFinished();
+				try {
+					this.onSongFinished();
+				} catch (err) {
+					Object.values(this.songEndErrorListeners).forEach((callback) => {
+						callback();
+					});
+				}
 			}
 		});
 	}
@@ -40,13 +49,8 @@ export class MusicPlayer implements IMusicPlayer {
 	}
 
 	private onSongFinished() {
-		try {
-			this.trackQueue.shift();
-			this.playSong();
-		} catch (err) {
-			// TODO: dont be stupid.
-			console.error(err);
-		}
+		this.trackQueue.shift();
+		this.playSong();
 	}
 
 	private playSong() {
@@ -115,7 +119,8 @@ export class MusicPlayer implements IMusicPlayer {
 	public next() {
 		if (this.player.state.status === AudioPlayerStatus.Playing) {
 			this.player.stop();
-			this.onSongFinished();
+		} else {
+			throw new Error("No songs to skip to.");
 		}
 	}
 
@@ -131,7 +136,11 @@ export class MusicPlayer implements IMusicPlayer {
 		}
 	}
 
-	public queue() {
+	public queue(): Track[] {
 		return JSON.parse(JSON.stringify(this.trackQueue));
+	}
+
+	public bindToSongEndErrors(verb: CommandVerb, callback: () => void) {
+		this.songEndErrorListeners[verb] = callback;
 	}
 }

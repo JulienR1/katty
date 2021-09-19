@@ -3,8 +3,9 @@ import ytSearch from "yt-search";
 import { Readable } from "stream";
 
 export class Track {
-	private title: string | undefined = undefined;
-	private url: string | undefined = undefined;
+	public title: string | undefined = undefined;
+	public url: string | undefined = undefined;
+	public thumbnailURL: string | undefined = undefined;
 
 	public getStream(): Readable {
 		if (!this.url) {
@@ -21,6 +22,7 @@ export class Track {
 
 			this.title = trackInfo.videoDetails.title;
 			this.url = trackInfo.videoDetails.video_url;
+			this.thumbnailURL = trackInfo.videoDetails.thumbnails[1].url;
 
 			return this;
 		}
@@ -32,8 +34,10 @@ export class Track {
 		const result = await ytSearch(args);
 
 		if (result.videos.length > 0) {
-			this.title = result.videos[0].title;
-			this.url = result.videos[0].url;
+			const videoData = result.videos[0];
+			this.title = videoData.title;
+			this.url = videoData.url;
+			this.thumbnailURL = videoData.thumbnail;
 			return this;
 		}
 

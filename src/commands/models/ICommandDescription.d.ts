@@ -1,3 +1,4 @@
+import { TextBasedChannels } from "discord.js";
 import { CommandVerb } from "../VerbRegistry";
 
 export interface ICommandDescription {

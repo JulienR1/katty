@@ -3,7 +3,7 @@ import { ICommandDescription } from "./models/ICommandDescription";
 import { CommandVerb } from "./VerbRegistry";
 
 export abstract class Command implements ICommand {
-	constructor(private verb: CommandVerb) {}
+	constructor(protected verb: CommandVerb) {}
 
 	public getVerb(): CommandVerb {
 		return this.verb;

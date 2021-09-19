@@ -9,7 +9,9 @@ dotenv.config();
 
 i18n.configure({
 	locales: ["en", "fr"],
+	defaultLocale: "en",
 	directory: path.join(__dirname, "lang"),
+	objectNotation: true,
 });
 i18n.setLocale(config.language);
 

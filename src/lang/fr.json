@@ -1,3 +1,13 @@
 {
-	"error": "Erreur"
+	"error": "Erreur",
+	"success": "Succès",
+	"play": {
+		"added": "Chanson ajoutée à la file d'attente avec succès.",
+		"notFound": "Impossible de trouver __{{search}}__."
+	},
+	"next": {
+		"skipped": "Chanson annulée.",
+		"emptyQueue": "La file d'attente est vide.",
+		"nextSong": "À venir:"
+	}
 }

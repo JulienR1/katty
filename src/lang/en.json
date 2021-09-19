@@ -1,3 +1,13 @@
 {
-	"error": "Error"
+	"error": "Error",
+	"success": "Success",
+	"play": {
+		"added": "Sucessfully added to the queue.",
+		"notFound": "Cannot find __{{search}}__."
+	},
+	"next": {
+		"skipped": "Skipped song.",
+		"emptyQueue": "No more songs to play.",
+		"nextSong": "Upcoming:"
+	}
 }

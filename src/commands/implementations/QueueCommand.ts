@@ -8,7 +8,8 @@ export class QueueCommand extends Command {
 		super(CommandVerb.QUEUE);
 	}
 
-	public execute(description: ICommandDescription): void {
+	public execute({ channel }: ICommandDescription): void {
 		console.log("queue: ", MusicPlayer.Instance().queue());
+		channel.send(JSON.stringify(MusicPlayer.Instance().queue()));
 	}
 }
