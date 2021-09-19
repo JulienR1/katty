@@ -1,5 +1,6 @@
 {
 	"error": "Error",
+	"errorDescription": "Something went wrong.",
 	"success": "Success",
 	"play": {
 		"added": "Sucessfully added to the queue.",
@@ -9,5 +10,7 @@
 		"skipped": "Skipped song.",
 		"emptyQueue": "No more songs to play.",
 		"nextSong": "Upcoming:"
-	}
+	},
+	"pause": ":pause_button: Pause",
+	"resume": ":play_pause: Resume"
 }

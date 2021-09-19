@@ -1,5 +1,6 @@
 {
 	"error": "Erreur",
+	"errorDescription": "Une erreur est survenue.",
 	"success": "Succès",
 	"play": {
 		"added": "Chanson ajoutée à la file d'attente avec succès.",
@@ -9,5 +10,7 @@
 		"skipped": "Chanson annulée.",
 		"emptyQueue": "La file d'attente est vide.",
 		"nextSong": "À venir:"
-	}
+	},
+	"pause": ":pause_button: Pause",
+	"resume": ":play_pause: Reprise"
 }
