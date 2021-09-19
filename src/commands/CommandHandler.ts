@@ -42,10 +42,7 @@ export class CommandHandler {
 		if (command && request.description) {
 			try {
 				command.execute(request.description);
-			} catch (err) {
-				// TODO: Remove this and actually manage the errors correctly with messages etc.
-				console.error(err);
-			}
+			} catch (err) {}
 		} else {
 			console.error("The specified command does not exist.");
 			throw new Error("The specified command does not exist.");
