@@ -3,5 +3,6 @@
 	"voiceCommunication": {
 		"maxLoadTime": 30e3
 	},
-	"language": "fr"
+	"language": "fr",
+	"songsToDisplayInQueue": 10
 }

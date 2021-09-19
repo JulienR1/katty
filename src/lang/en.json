@@ -12,5 +12,11 @@
 		"nextSong": "Upcoming:"
 	},
 	"pause": ":pause_button: Pause",
-	"resume": ":play_pause: Resume"
+	"resume": ":play_pause: Resume",
+	"queue": {
+		"title": "Queue",
+		"now": "Now",
+		"empty": "*cricket_sounds.mp3*\nIt looks pretty empty in here",
+		"nextNSongs": "Next {{songCount}} songs"
+	}
 }

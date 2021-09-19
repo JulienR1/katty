@@ -12,5 +12,11 @@
 		"nextSong": "À venir:"
 	},
 	"pause": ":pause_button: Pause",
-	"resume": ":play_pause: Reprise"
+	"resume": ":play_pause: Reprise",
+	"queue": {
+		"title": "File d'attente",
+		"now": "En cours",
+		"empty": "*bruits_criquets.mp3*\nC'est vide par ici",
+		"nextNSongs": "{{songCount}} prochaines chansons"
+	}
 }

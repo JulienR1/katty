@@ -6,6 +6,7 @@ import { CommandVerb } from "../VerbRegistry";
 import { ICommandDescription } from "../models/ICommandDescription";
 import { ErrorEmbed } from "../embeds/ErrorEmbed";
 import { SuccessEmbed } from "../embeds/SuccessEmbed";
+import { VoiceChannel } from "discord.js";
 
 export class PlayCommand extends Command {
 	constructor() {
@@ -26,7 +27,7 @@ export class PlayCommand extends Command {
 		});
 
 		if (track) {
-			MusicPlayer.Instance().enqueue(member.voice.channel, track);
+			MusicPlayer.Instance().enqueue(member?.voice.channel as VoiceChannel, track);
 		}
 
 		const embedToSend = track ? this.successEmbed(track) : this.errorEmbed(keywords.join(" "));
