@@ -2,11 +2,25 @@ import { AudioResource, createAudioResource, demuxProbe } from "@discordjs/voice
 import { raw } from "youtube-dl-exec";
 import ytSearch from "yt-search";
 import ytdl from "ytdl-core";
+import { YoutubeTrackFactory } from "./Factories/YoutubeTrackFactory";
+import { ITrack, ITrackData } from "./ITrack";
 
-export class Track {
+export class Track implements ITrack {
+	// TODO: remove variables
 	public title: string | undefined = undefined;
 	public url: string | undefined = undefined;
 	public thumbnailURL: string | undefined = undefined;
+
+	constructor(private trackData: ITrackData) {}
+
+	public getData(): ITrackData {
+		return JSON.parse(JSON.stringify(this.trackData));
+	}
+
+	// TODO
+	public getAudioResource(): Promise<AudioResource<Track>> {
+		return undefined as any;
+	}
 
 	public getStream(): Promise<AudioResource<Track>> {
 		if (!this.url) {
@@ -50,6 +64,7 @@ export class Track {
 	}
 
 	public async fromURL(typedUrl: string): Promise<Track> {
+		new YoutubeTrackFactory().from(typedUrl);
 		const youtubeRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/;
 
 		if (typedUrl.match(youtubeRegex)) {
