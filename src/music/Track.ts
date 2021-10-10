@@ -1,17 +1,52 @@
-import ytdl from "ytdl-core";
+import { AudioResource, createAudioResource, demuxProbe } from "@discordjs/voice";
+import { raw } from "youtube-dl-exec";
 import ytSearch from "yt-search";
-import { Readable } from "stream";
+import ytdl from "ytdl-core";
 
 export class Track {
 	public title: string | undefined = undefined;
 	public url: string | undefined = undefined;
 	public thumbnailURL: string | undefined = undefined;
 
-	public getStream(): Readable {
+	public getStream(): Promise<AudioResource<Track>> {
 		if (!this.url) {
 			throw new Error("Invalid track.");
 		}
-		return ytdl(this.url, { filter: "audioonly" });
+
+		const videoUrl = this.url;
+		return new Promise((resolve, reject) => {
+			const process = raw(
+				videoUrl,
+				{ o: "-", q: "", f: "bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio", r: "100K" },
+				{ stdio: ["ignore", "pipe", "ignore"] }
+			);
+
+			if (!process.stdout) {
+				return reject(new Error("No output stream"));
+			}
+
+			const stream = process.stdout;
+			const onError = (err: Error) => {
+				if (!process.killed) {
+					process.kill();
+				}
+				stream.resume();
+				reject(err);
+			};
+
+			process
+				.once("spawn", async () => {
+					try {
+						const probe = await demuxProbe(stream);
+						return resolve(createAudioResource(probe.stream, { metadata: this, inputType: probe.type }));
+					} catch (err) {
+						onError(err as Error);
+					}
+				})
+				.catch(onError);
+		});
+
+		// return ytdl(this.url, { filter: "audioonly" });
 	}
 
 	public async fromURL(typedUrl: string): Promise<Track> {

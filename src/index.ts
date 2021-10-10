@@ -3,7 +3,7 @@ import i18n from "i18n";
 import * as config from "./config.json";
 import { BitFieldResolvable, Client, Intents, IntentsString } from "discord.js";
 import { DiscordEventHandler } from "./events/DiscordEventHandler";
-import path from "path/posix";
+import path from "path";
 
 dotenv.config();
 

@@ -48,18 +48,19 @@ export class MusicPlayer implements IMusicPlayer {
 		return MusicPlayer.instance;
 	}
 
-	private onSongFinished() {
+	private async onSongFinished() {
 		this.trackQueue.shift();
-		this.playSong();
+		await this.playSong();
 	}
 
-	private playSong() {
+	private async playSong() {
 		if (this.trackQueue.length === 0) {
 			throw new Error("No songs to play.");
 		}
 
 		const currentTrack = this.trackQueue[0];
-		const resource = createAudioResource(currentTrack.getStream());
+		// const resource = createAudioResource(currentTrack.getStream());
+		const resource = await currentTrack.getStream();
 		this.player.play(resource);
 	}
 
@@ -102,17 +103,17 @@ export class MusicPlayer implements IMusicPlayer {
 	public async enqueue(channel: VoiceChannel, track: Track) {
 		await this.join(channel);
 		this.trackQueue.push(track);
-		this.play();
+		await this.play();
 	}
 
-	public play() {
+	public async play() {
 		if (this.player.state.status === AudioPlayerStatus.Playing) {
 			return;
 		}
 		if (this.player.state.status === AudioPlayerStatus.Paused) {
 			this.resume();
 		} else {
-			this.playSong();
+			await this.playSong();
 		}
 	}
 
