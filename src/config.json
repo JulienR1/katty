@@ -2,7 +2,7 @@
 	"commandPrefix": "!",
 	"voiceCommunication": {
 		"maxLoadTime": 30e3,
-		"maxIdleTime": 600e3
+		"maxIdleTime": 900e3
 	},
 	"language": "fr",
 	"songsToDisplayInQueue": 10

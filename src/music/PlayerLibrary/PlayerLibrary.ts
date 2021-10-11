@@ -24,23 +24,29 @@ export class PlayerLibrary implements IPlayerLibrary {
 		return PlayerLibrary.instance;
 	}
 
-	public addTo(voiceChannel: VoiceChannel): IMusicPlayer {
-		if (this.getFrom(voiceChannel)) {
+	public addTo(voiceChannel: VoiceChannel): Promise<IMusicPlayer> {
+		if (this.getFrom(voiceChannel)?.isVoiceConnected(voiceChannel)) {
 			throw new Error("The provided channel already has a music player.");
 		}
 
-		const player = new MusicPlayer();
-		const timeout = this.generateTimeout(voiceChannel);
-		this.players[this.getKeyFrom(voiceChannel)] = { player, timeout };
+		const key = this.getKeyFrom(voiceChannel);
+		if (this.players[key]) {
+			// If a player returns to a previous server before its cd is over.
+			clearTimeout(this.players[key].timeout);
+		}
 
-		return player;
+		const player = new MusicPlayer(voiceChannel);
+		const timeout = this.generateTimeout(voiceChannel);
+		this.players[key] = { player, timeout };
+
+		return player.join(voiceChannel);
 	}
 
 	public getFrom(voiceChannel: VoiceChannel): IMusicPlayer | undefined {
-		const { player } = this.players[this.getKeyFrom(voiceChannel)];
-		if (player) {
+		const registeredPlayer = this.players[this.getKeyFrom(voiceChannel)];
+		if (registeredPlayer) {
 			this.refreshExitTimer(voiceChannel);
-			return player;
+			return registeredPlayer.player;
 		}
 		return undefined;
 	}
@@ -50,8 +56,11 @@ export class PlayerLibrary implements IPlayerLibrary {
 			throw new Error("Cannot remove an unexisting player.");
 		}
 
-		clearTimeout(this.players[this.getKeyFrom(voiceChannel)].timeout);
-		delete this.players[this.getKeyFrom(voiceChannel)];
+		const key = this.getKeyFrom(voiceChannel);
+		this.players[key].player.leave();
+
+		clearTimeout(this.players[key].timeout);
+		delete this.players[key];
 	}
 
 	private getKeyFrom(voiceChannel: VoiceChannel): string {
