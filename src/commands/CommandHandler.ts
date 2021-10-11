@@ -10,6 +10,7 @@ import {
 	ResumeCommand,
 	QueueCommand,
 } from "./implementations";
+import { LoopCommand } from "./implementations/LoopCommand";
 
 export class CommandHandler {
 	private static instance: CommandHandler | undefined = undefined;
@@ -24,6 +25,7 @@ export class CommandHandler {
 			new PauseCommand(),
 			new ResumeCommand(),
 			new QueueCommand(),
+			new LoopCommand(),
 		];
 
 		unmappedCommands.reduce((obj, command) => {

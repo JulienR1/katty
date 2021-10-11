@@ -61,6 +61,10 @@ export class MusicPlayer implements IMusicPlayer {
 		return !disconnectedStatuses.includes(this.voiceConnection.state.status);
 	}
 
+	public getIsLooping(): boolean {
+		return this.isLooping;
+	}
+
 	public async join(channel: VoiceChannel): Promise<IMusicPlayer> {
 		if (!channel) {
 			throw new Error("No channel to connect to.");
@@ -101,8 +105,8 @@ export class MusicPlayer implements IMusicPlayer {
 		return this;
 	}
 
-	public toggleLoop(isLooping: boolean): IMusicPlayer {
-		this.isLooping = isLooping;
+	public toggleLoop(): IMusicPlayer {
+		this.isLooping = !this.isLooping;
 		return this;
 	}
 

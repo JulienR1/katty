@@ -3,12 +3,14 @@ import { ITrack, ITrackData } from "../Track";
 
 export interface IMusicPlayer {
 	isVoiceConnected(channel: VoiceChannel): boolean;
+	getIsLooping(): boolean;
+
 	join(channel: VoiceChannel): Promise<IMusicPlayer>;
 	leave(): void;
 
 	enqueue(track: ITrack): IMusicPlayer;
 	togglePause(isPausing: boolean): IMusicPlayer;
-	toggleLoop(isLooping: boolean): IMusicPlayer;
+	toggleLoop(): IMusicPlayer;
 
 	next(): IMusicPlayer;
 	clear(): IMusicPlayer;

@@ -18,5 +18,11 @@
 		"now": "Now",
 		"empty": "*cricket_sounds.mp3*\nIt looks pretty empty in here",
 		"nextNSongs": "Next {{songCount}} songs"
+	},
+	"loop": {
+		"title": ":loop: Loop: {{loopState}}",
+		"activeState": "Active",
+		"inactiveState": "Inactive",
+		"error": "Cannot update the looping state."
 	}
 }

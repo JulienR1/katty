@@ -18,5 +18,11 @@
 		"now": "En cours",
 		"empty": "*bruits_criquets.mp3*\nC'est vide par ici",
 		"nextNSongs": "{{songCount}} prochaines chansons"
+	},
+	"loop": {
+		"title": ":loop: Boucle: {{loopState}}",
+		"activeState": "Active",
+		"inactiveState": "Inactive",
+		"error": "Impossible de mettre à jour l'état de la boucle."
 	}
 }

@@ -3,11 +3,10 @@ import { Command } from "../Command";
 import { Track } from "../../music/Track";
 import { CommandVerb } from "../VerbRegistry";
 import { ICommandDescription } from "../models/ICommandDescription";
-import { ErrorEmbed } from "../embeds/ErrorEmbed";
-import { SuccessEmbed } from "../embeds/SuccessEmbed";
 import { MessageEmbed, VoiceChannel } from "discord.js";
 import { PlayerLibrary } from "../../music/PlayerLibrary";
 import { ITrackFactory, KeywordsTrackFactory, YoutubeTrackFactory } from "../../music/Track/Factories";
+import { ErrorEmbed, SuccessEmbed } from "../embeds";
 
 export class PlayCommand extends Command {
 	private factories: ITrackFactory[] = [new YoutubeTrackFactory(), new KeywordsTrackFactory()];

@@ -7,6 +7,7 @@ export enum CommandVerb {
 	PAUSE = "Pause",
 	RESUME = "Resume",
 	QUEUE = "Queue",
+	LOOP = "Loop",
 }
 
 export const VerbRegistry: { [key in CommandVerb]?: string[] } = {
@@ -17,4 +18,5 @@ export const VerbRegistry: { [key in CommandVerb]?: string[] } = {
 	Pause: ["pause", "stop"],
 	Resume: ["resume", "continue", "res"],
 	Queue: ["queue", "q", "list"],
+	Loop: ["loop", "l", "existentialisme"],
 };
