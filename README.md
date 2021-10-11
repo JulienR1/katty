@@ -1,4 +1,3 @@
-
 # Katty
 
 Katty will sing for us in our discord channels.
@@ -10,14 +9,16 @@ Katty is a [Discord](https://discord.com/) bot made with [NodeJS](https://nodejs
 ### Commands
 
 Commands follow the structure `![VERB] ([ATTRIBUTES])`. The following list explains the current bot functionnalities.
-| Command | Verb | Attributes | Description |
-|-|-|-|-|
-| Join | `join` | — | Summons the bot in the same channel as the user |
-| Kick | `kick` `leave` | — | Forces the bot to disconnect |
-| Play | `play` `p` | `YouTube url` `search keywords` | Requests a song to be played |
-| Pause | `pause` `stop` | — | Pauses the current song |
-| Resume | `resume` `continue` `res` | — | Continues the current song |
-| Queue | `queue` `q` | — | Displays the current songs in the playlist
+
+| Command | Verb                      | Attributes                      | Description                                                 |
+| ------- | ------------------------- | ------------------------------- | ----------------------------------------------------------- |
+| Join    | `join`                    | —                               | Summons the bot in the same channel as the user             |
+| Kick    | `kick` `leave`            | —                               | Forces the bot to disconnect                                |
+| Play    | `play` `p`                | `YouTube url` `search keywords` | Requests a song to be played                                |
+| Pause   | `pause` `stop`            | —                               | Pauses the current song                                     |
+| Resume  | `resume` `continue` `res` | —                               | Continues the current song                                  |
+| Loop    | `loop` `l`                | —                               | Will play the current song again and again until turned off |
+| Queue   | `queue` `q`               | —                               | Displays the current songs in the playlist                  |
 
 ### Customizations
 
