@@ -11,7 +11,7 @@ import {
 import { VoiceChannel } from "discord.js";
 import { IMusicPlayer } from ".";
 import { createDiscordJSAdapter } from "../../voiceAdapter/JsAdapter";
-import { ITrack } from "../Track";
+import { ITrack, ITrackData } from "../Track";
 import config from "./../../config.json";
 
 export class MusicPlayer implements IMusicPlayer {
@@ -27,7 +27,7 @@ export class MusicPlayer implements IMusicPlayer {
 		this.voiceChannel = initialVoiceChannel;
 
 		this.audioPlayer = createAudioPlayer();
-		this.audioPlayer.on("stateChange", this.onPlayerStateChange);
+		this.audioPlayer.on("stateChange", (oldState, newState) => this.onPlayerStateChange(oldState, newState));
 	}
 
 	private onPlayerStateChange(oldState: AudioPlayerState, newState: AudioPlayerState) {
@@ -96,8 +96,8 @@ export class MusicPlayer implements IMusicPlayer {
 		return this;
 	}
 
-	public togglePause(isPlaying: boolean): IMusicPlayer {
-		isPlaying ? this.audioPlayer.unpause() : this.audioPlayer.pause();
+	public togglePause(isPausing: boolean): IMusicPlayer {
+		isPausing ? this.audioPlayer.pause() : this.audioPlayer.unpause();
 		return this;
 	}
 
@@ -145,7 +145,8 @@ export class MusicPlayer implements IMusicPlayer {
 		return this;
 	}
 
-	public getQueue(): ITrack[] {
-		return JSON.parse(JSON.stringify(this.playlist));
+	public getQueue(): ITrackData[] {
+		const playlistData = this.playlist.map((track) => track.getData());
+		return JSON.parse(JSON.stringify(playlistData));
 	}
 }

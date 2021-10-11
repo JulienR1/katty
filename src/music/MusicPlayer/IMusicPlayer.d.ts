@@ -1,5 +1,5 @@
 import { VoiceChannel } from "discord.js";
-import { ITrack } from "../Track";
+import { ITrack, ITrackData } from "../Track";
 
 export interface IMusicPlayer {
 	isVoiceConnected(channel: VoiceChannel): boolean;
@@ -7,7 +7,7 @@ export interface IMusicPlayer {
 	leave(): void;
 
 	enqueue(track: ITrack): IMusicPlayer;
-	togglePause(isPlaying: boolean): IMusicPlayer;
+	togglePause(isPausing: boolean): IMusicPlayer;
 	toggleLoop(isLooping: boolean): IMusicPlayer;
 
 	next(): IMusicPlayer;
@@ -16,5 +16,5 @@ export interface IMusicPlayer {
 	remove(trackIndex: number): IMusicPlayer;
 	seek(timestamp: string): IMusicPlayer;
 
-	getQueue(): ITrack[];
+	getQueue(): ITrackData[];
 }

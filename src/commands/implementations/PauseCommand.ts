@@ -1,5 +1,6 @@
+import { VoiceChannel } from "discord.js";
 import i18n from "i18n";
-import { MusicPlayer } from "../../music/MusicPlayer";
+import { PlayerLibrary } from "../../music/PlayerLibrary";
 import { Command } from "../Command";
 import { ErrorEmbed } from "../embeds/ErrorEmbed";
 import { SuccessEmbed } from "../embeds/SuccessEmbed";
@@ -11,9 +12,15 @@ export class PauseCommand extends Command {
 		super(CommandVerb.PAUSE);
 	}
 
-	public execute({ channel }: ICommandDescription): void {
+	public execute({ channel, member }: ICommandDescription): void {
+		const musicPlayer = PlayerLibrary.Instance().getFrom(member?.voice.channel as VoiceChannel);
+		if (!musicPlayer) {
+			console.log("TODO: needs to be connected :)");
+			return;
+		}
+
 		try {
-			MusicPlayer.Instance().stop();
+			musicPlayer.togglePause(true);
 			channel.send({ embeds: [new SuccessEmbed().setTitle(i18n.__("pause"))] });
 		} catch (err) {
 			channel.send({ embeds: [new ErrorEmbed().setDescription(i18n.__("errorDescription"))] });

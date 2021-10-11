@@ -1,5 +1,5 @@
 import { VoiceChannel } from "discord.js";
-import { MusicPlayer } from "../../music/MusicPlayer";
+import { PlayerLibrary } from "../../music/PlayerLibrary";
 import { Command } from "../Command";
 import { ICommandDescription } from "../models/ICommandDescription";
 import { CommandVerb } from "../VerbRegistry";
@@ -10,6 +10,10 @@ export class JoinCommand extends Command {
 	}
 
 	public async execute({ member }: ICommandDescription) {
-		MusicPlayer.Instance().join(member?.voice.channel as VoiceChannel);
+		try {
+			PlayerLibrary.Instance().addTo(member?.voice.channel as VoiceChannel);
+		} catch (err) {
+			console.log(err);
+		}
 	}
 }

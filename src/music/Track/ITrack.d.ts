@@ -8,6 +8,6 @@ export interface ITrackData {
 }
 
 export interface ITrack {
-	getAudioResource(): Promise<AudioResource>;
+	getAudioResource(): Promise<AudioResource<ITrack>>;
 	getData(): ITrackData;
 }

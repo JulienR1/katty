@@ -1,12 +1,13 @@
-import { EmbedFieldData, GuildMember, TextBasedChannels, VoiceChannel } from "discord.js";
+import { EmbedFieldData, TextBasedChannels, VoiceChannel } from "discord.js";
 import i18n from "i18n";
 import * as config from "./../../config.json";
-import { MusicPlayer } from "../../music/MusicPlayer";
-import { Track } from "../../music/Track";
+import { IMusicPlayer } from "../../music/MusicPlayer";
 import { Command } from "../Command";
 import { SuccessEmbed } from "../embeds/SuccessEmbed";
 import { ICommandDescription } from "../models/ICommandDescription";
 import { CommandVerb } from "../VerbRegistry";
+import { PlayerLibrary } from "../../music/PlayerLibrary";
+import { YoutubeTrackFactory } from "../../music/Track/Factories";
 
 export class QueueCommand extends Command {
 	constructor() {
@@ -14,9 +15,15 @@ export class QueueCommand extends Command {
 	}
 
 	public async execute({ member, channel }: ICommandDescription): Promise<void> {
-		const queue = MusicPlayer.Instance().queue();
+		const musicPlayer = PlayerLibrary.Instance().getFrom(member?.voice.channel as VoiceChannel);
+		if (!musicPlayer) {
+			console.log("TODO: be connected and shit ;)");
+			return;
+		}
+
+		const queue = musicPlayer.getQueue();
 		if (queue.length === 0) {
-			return this.onEmptyQueue(member, channel);
+			return this.onEmptyQueue(channel, musicPlayer);
 		}
 
 		const songsEmbed: EmbedFieldData[] = queue.map((track, index) => ({
@@ -35,10 +42,10 @@ export class QueueCommand extends Command {
 		channel.send({ embeds: [queueEmbed] });
 	}
 
-	private async onEmptyQueue(member: GuildMember | null, channel: TextBasedChannels) {
+	private async onEmptyQueue(channel: TextBasedChannels, musicPlayer: IMusicPlayer) {
 		channel.send({ embeds: [new SuccessEmbed().setTitle(i18n.__("queue.empty"))] });
 
-		const cricketTrack = await new Track().fromURL("https://www.youtube.com/watch?v=RktX4lbe_g4");
-		MusicPlayer.Instance().enqueue(member?.voice.channel as VoiceChannel, cricketTrack);
+		const cricketTrack = await new YoutubeTrackFactory().from("https://www.youtube.com/watch?v=RktX4lbe_g4");
+		musicPlayer.enqueue(cricketTrack);
 	}
 }

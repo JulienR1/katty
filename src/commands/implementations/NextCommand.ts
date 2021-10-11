@@ -1,27 +1,31 @@
 import i18n from "i18n";
-import { TextBasedChannels } from "discord.js";
-import { MusicPlayer } from "../../music/MusicPlayer";
+import { TextBasedChannels, VoiceChannel } from "discord.js";
 import { Command } from "../Command";
 import { ErrorEmbed } from "../embeds/ErrorEmbed";
 import { SuccessEmbed } from "../embeds/SuccessEmbed";
 import { ICommandDescription } from "../models/ICommandDescription";
 import { CommandVerb } from "../VerbRegistry";
-import { Track } from "../../music/Track";
+import { ITrackData } from "../../music/Track";
+import { PlayerLibrary } from "../../music/PlayerLibrary";
 
 export class NextCommand extends Command {
 	constructor() {
 		super(CommandVerb.NEXT);
 	}
 
-	public execute({ channel }: ICommandDescription): void {
-		try {
-			const queue = MusicPlayer.Instance().queue();
-			const callback = queue.length > 1 ? () => this.onNextError(channel) : () => {};
+	public execute({ member, channel }: ICommandDescription): void {
+		const musicPlayer = PlayerLibrary.Instance().getFrom(member?.voice.channel as VoiceChannel);
+		if (!musicPlayer) {
+			console.log("TODO: needs to be connected to do stuff :)");
+			return;
+		}
 
-			MusicPlayer.Instance().bindToSongEndErrors(this.verb, callback);
-			MusicPlayer.Instance().next();
+		try {
+			musicPlayer.next();
+			const playlist = musicPlayer.getQueue();
+
 			channel.send({
-				embeds: [queue.length > 1 ? this.nextSongEmbed(queue[1]) : this.noMoreSongEmbed()],
+				embeds: [playlist.length > 1 ? this.nextSongEmbed(playlist[1]) : this.noMoreSongEmbed()],
 			});
 		} catch (err) {
 			this.onNextError(channel);
@@ -32,7 +36,7 @@ export class NextCommand extends Command {
 		channel.send({ embeds: [new ErrorEmbed().setDescription(i18n.__("next.emptyQueue"))] });
 	}
 
-	private nextSongEmbed = (track: Track) =>
+	private nextSongEmbed = (track: ITrackData) =>
 		new SuccessEmbed()
 			.setTitle(i18n.__("next.skipped"))
 			.setDescription(`${i18n.__("next.nextSong")}\n[${track.title}](${track.url})`);

@@ -1,13 +1,15 @@
 import { ICommand } from "./models/ICommand";
 import { CommandVerb } from "./VerbRegistry";
 import { CommandRequest } from "./CommandRequest";
-import { PlayCommand } from "./implementations/PlayCommand";
-import { JoinCommand } from "./implementations/JoinCommand";
-import { KickCommand } from "./implementations/KickCommand";
-import { PauseCommand } from "./implementations/PauseCommand";
-import { NextCommand } from "./implementations/NextCommand";
-import { ResumeCommand } from "./implementations/ResumeCommand";
-import { QueueCommand } from "./implementations/QueueCommand";
+import {
+	JoinCommand,
+	KickCommand,
+	NextCommand,
+	PlayCommand,
+	PauseCommand,
+	ResumeCommand,
+	QueueCommand,
+} from "./implementations";
 
 export class CommandHandler {
 	private static instance: CommandHandler | undefined = undefined;
@@ -15,11 +17,11 @@ export class CommandHandler {
 
 	private constructor() {
 		const unmappedCommands: ICommand[] = [
-			new PlayCommand(),
 			new JoinCommand(),
 			new KickCommand(),
-			new PauseCommand(),
+			new PlayCommand(),
 			new NextCommand(),
+			new PauseCommand(),
 			new ResumeCommand(),
 			new QueueCommand(),
 		];
