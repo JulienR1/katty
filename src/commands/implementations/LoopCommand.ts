@@ -1,7 +1,7 @@
 import { MessageEmbed, VoiceChannel } from "discord.js";
 import { PlayerLibrary } from "../../music/PlayerLibrary";
 import { Command } from "../Command";
-import { ErrorEmbed, SuccessEmbed } from "../embeds";
+import { BotNotConnectedEmbed, ErrorEmbed, SuccessEmbed } from "../embeds";
 import { ICommandDescription } from "../models/ICommandDescription";
 import { CommandVerb } from "../VerbRegistry";
 import i18n from "i18n";
@@ -14,7 +14,7 @@ export class LoopCommand extends Command {
 	public execute({ member, channel }: ICommandDescription): void {
 		const musicPlayer = PlayerLibrary.Instance().getFrom(member?.voice.channel as VoiceChannel);
 		if (!musicPlayer) {
-			console.log("TODO: connec!");
+			channel.send({ embeds: [new BotNotConnectedEmbed()] });
 			return;
 		}
 

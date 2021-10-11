@@ -2,6 +2,10 @@
 	"error": "Error",
 	"errorDescription": "Something went wrong.",
 	"success": "Success",
+	"notConnected": {
+		"user": "You need to be connected to execute commands.",
+		"bot": "Katty has to be connected to execute this command."
+	},
 	"play": {
 		"added": "Sucessfully added to the queue.",
 		"notFound": "Cannot find __{{search}}__."

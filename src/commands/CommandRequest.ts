@@ -1,4 +1,5 @@
 import * as config from "../config.json";
+import { InvalidPrefixError } from "../errors/InvalidPrefixError";
 import { ICommandContent } from "./models/ICommandContent";
 import { ICommandDescription } from "./models/ICommandDescription";
 import { CommandVerb, VerbRegistry } from "./VerbRegistry";
@@ -21,7 +22,7 @@ export class CommandRequest {
 
 	private removePrefix(content: string): string {
 		if (!this.hasPrefix(content)) {
-			throw new Error("The requested prefix was not found.");
+			throw new InvalidPrefixError(content);
 		}
 		return content.slice(config.commandPrefix.length);
 	}

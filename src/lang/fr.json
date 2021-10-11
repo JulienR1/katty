@@ -2,6 +2,10 @@
 	"error": "Erreur",
 	"errorDescription": "Une erreur est survenue.",
 	"success": "Succès",
+	"notConnected": {
+		"user": "Vous devez être connecté pour effectuer des commandes.",
+		"bot": "Katty doit être connecté pour effectuer cette commande."
+	},
 	"play": {
 		"added": "Chanson ajoutée à la file d'attente avec succès.",
 		"notFound": "Impossible de trouver __{{search}}__."

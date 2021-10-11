@@ -1,12 +1,11 @@
 import i18n from "i18n";
 import { TextBasedChannels, VoiceChannel } from "discord.js";
 import { Command } from "../Command";
-import { ErrorEmbed } from "../embeds/ErrorEmbed";
-import { SuccessEmbed } from "../embeds/SuccessEmbed";
 import { ICommandDescription } from "../models/ICommandDescription";
 import { CommandVerb } from "../VerbRegistry";
 import { ITrackData } from "../../music/Track";
 import { PlayerLibrary } from "../../music/PlayerLibrary";
+import { BotNotConnectedEmbed, ErrorEmbed, SuccessEmbed } from "../embeds";
 
 export class NextCommand extends Command {
 	constructor() {
@@ -16,7 +15,7 @@ export class NextCommand extends Command {
 	public execute({ member, channel }: ICommandDescription): void {
 		const musicPlayer = PlayerLibrary.Instance().getFrom(member?.voice.channel as VoiceChannel);
 		if (!musicPlayer) {
-			console.log("TODO: needs to be connected to do stuff :)");
+			channel.send({ embeds: [new BotNotConnectedEmbed()] });
 			return;
 		}
 

@@ -3,11 +3,11 @@ import i18n from "i18n";
 import * as config from "./../../config.json";
 import { IMusicPlayer } from "../../music/MusicPlayer";
 import { Command } from "../Command";
-import { SuccessEmbed } from "../embeds/SuccessEmbed";
 import { ICommandDescription } from "../models/ICommandDescription";
 import { CommandVerb } from "../VerbRegistry";
 import { PlayerLibrary } from "../../music/PlayerLibrary";
 import { YoutubeTrackFactory } from "../../music/Track/Factories";
+import { BotNotConnectedEmbed, SuccessEmbed } from "../embeds";
 
 export class QueueCommand extends Command {
 	constructor() {
@@ -17,7 +17,7 @@ export class QueueCommand extends Command {
 	public async execute({ member, channel }: ICommandDescription): Promise<void> {
 		const musicPlayer = PlayerLibrary.Instance().getFrom(member?.voice.channel as VoiceChannel);
 		if (!musicPlayer) {
-			console.log("TODO: be connected and shit ;)");
+			channel.send({ embeds: [new BotNotConnectedEmbed()] });
 			return;
 		}
 

@@ -2,8 +2,7 @@ import { VoiceChannel } from "discord.js";
 import i18n from "i18n";
 import { PlayerLibrary } from "../../music/PlayerLibrary";
 import { Command } from "../Command";
-import { ErrorEmbed } from "../embeds/ErrorEmbed";
-import { SuccessEmbed } from "../embeds/SuccessEmbed";
+import { ErrorEmbed, SuccessEmbed, BotNotConnectedEmbed } from "../embeds";
 import { ICommandDescription } from "../models/ICommandDescription";
 import { CommandVerb } from "../VerbRegistry";
 
@@ -15,7 +14,7 @@ export class ResumeCommand extends Command {
 	public execute({ channel, member }: ICommandDescription): void {
 		const musicPlayer = PlayerLibrary.Instance().getFrom(member?.voice.channel as VoiceChannel);
 		if (!musicPlayer) {
-			console.log("TODO: needs to be connected :)");
+			channel.send({ embeds: [new BotNotConnectedEmbed()] });
 			return;
 		}
 
