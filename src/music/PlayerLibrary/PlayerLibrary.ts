@@ -73,6 +73,13 @@ export class PlayerLibrary implements IPlayerLibrary {
 	}
 
 	private generateTimeout(voiceChannel: VoiceChannel): NodeJS.Timeout {
-		return setTimeout(() => this.removeFrom(voiceChannel), config.voiceCommunication.maxIdleTime);
+		return setTimeout(() => {
+			const subscribedPlayer = this.players[this.getKeyFrom(voiceChannel)];
+			if (subscribedPlayer?.player.isVoiceConnected(voiceChannel) && subscribedPlayer.player.getQueue().length > 0) {
+				subscribedPlayer.timeout = this.generateTimeout(voiceChannel);
+			} else {
+				this.removeFrom(voiceChannel);
+			}
+		}, config.voiceCommunication.maxIdleTime);
 	}
 }
