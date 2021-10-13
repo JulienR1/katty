@@ -118,7 +118,7 @@ export class MusicPlayer implements IMusicPlayer {
 	}
 
 	public clear(): IMusicPlayer {
-		this.playlist.length = 0;
+		this.playlist.length = 1;
 		return this;
 	}
 

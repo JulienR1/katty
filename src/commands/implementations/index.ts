@@ -5,5 +5,6 @@ import { NextCommand } from "./NextCommand";
 import { PauseCommand } from "./PauseCommand";
 import { ResumeCommand } from "./ResumeCommand";
 import { QueueCommand } from "./QueueCommand";
+import { ClearCommand } from "./ClearCommand";
 
-export { JoinCommand, KickCommand, PlayCommand, NextCommand, PauseCommand, ResumeCommand, QueueCommand };
+export { JoinCommand, KickCommand, PlayCommand, NextCommand, PauseCommand, ResumeCommand, QueueCommand, ClearCommand };

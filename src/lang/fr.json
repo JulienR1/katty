@@ -4,7 +4,7 @@
 	"success": "Succès",
 	"notConnected": {
 		"user": "Vous devez être connecté pour effectuer des commandes.",
-		"bot": "Katty doit être connecté pour effectuer cette commande."
+		"bot": "Katty doit être connectée pour effectuer cette commande."
 	},
 	"play": {
 		"added": "Chanson ajoutée à la file d'attente avec succès.",
@@ -28,5 +28,6 @@
 		"activeState": "Active",
 		"inactiveState": "Inactive",
 		"error": "Impossible de mettre à jour l'état de la boucle."
-	}
+	},
+	"clear": "La file d'attente a été vidée."
 }

@@ -28,5 +28,6 @@
 		"activeState": "Active",
 		"inactiveState": "Inactive",
 		"error": "Cannot update the looping state."
-	}
+	},
+	"clear": "The queue has been cleared."
 }

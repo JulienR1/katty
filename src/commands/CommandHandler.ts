@@ -9,6 +9,7 @@ import {
 	PauseCommand,
 	ResumeCommand,
 	QueueCommand,
+	ClearCommand,
 } from "./implementations";
 import { LoopCommand } from "./implementations/LoopCommand";
 
@@ -26,6 +27,7 @@ export class CommandHandler {
 			new ResumeCommand(),
 			new QueueCommand(),
 			new LoopCommand(),
+			new ClearCommand(),
 		];
 
 		unmappedCommands.reduce((obj, command) => {

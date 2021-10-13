@@ -14,9 +14,11 @@ export interface IMusicPlayer {
 
 	next(): IMusicPlayer;
 	clear(): IMusicPlayer;
+	/******** TODO */
 	move(trackIndex: number, targetIndex: number): IMusicPlayer;
 	remove(trackIndex: number): IMusicPlayer;
 	seek(timestamp: string): IMusicPlayer;
+	/************* */
 
 	getQueue(): ITrackData[];
 }
