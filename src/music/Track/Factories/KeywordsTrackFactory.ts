@@ -5,7 +5,7 @@ import ytSearch from "yt-search";
 import { Track } from "../Track";
 
 export class KeywordsTrackFactory implements ITrackFactory {
-	public from(arg: string): Promise<ITrack> {
+	public from(arg: string): Promise<ITrack[]> {
 		const keywords = arg;
 
 		return new Promise(async (resolve, reject) => {
@@ -26,7 +26,7 @@ export class KeywordsTrackFactory implements ITrackFactory {
 				lengthSeconds: videoData.seconds.toString(),
 			};
 
-			return resolve(new Track(trackData));
+			return resolve([new Track(trackData)]);
 		});
 	}
 }

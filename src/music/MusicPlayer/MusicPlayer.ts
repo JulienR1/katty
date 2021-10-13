@@ -94,8 +94,8 @@ export class MusicPlayer implements IMusicPlayer {
 		}
 	}
 
-	public enqueue(track: ITrack): IMusicPlayer {
-		this.playlist.push(track);
+	public enqueue(tracks: ITrack[]): IMusicPlayer {
+		this.playlist.push(...tracks);
 		this.triggerTrack();
 		return this;
 	}

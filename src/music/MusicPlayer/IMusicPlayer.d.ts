@@ -8,7 +8,7 @@ export interface IMusicPlayer {
 	join(channel: VoiceChannel): Promise<IMusicPlayer>;
 	leave(): void;
 
-	enqueue(track: ITrack): IMusicPlayer;
+	enqueue(tracks: ITrack[]): IMusicPlayer;
 	togglePause(isPausing: boolean): IMusicPlayer;
 	toggleLoop(): IMusicPlayer;
 
