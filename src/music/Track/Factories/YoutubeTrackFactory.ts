@@ -5,7 +5,7 @@ import { Track } from "../Track";
 import { ITrackFactory } from "./ITrackFactory";
 
 export class YoutubeTrackFactory implements ITrackFactory {
-	public from(arg: string): Promise<ITrack> {
+	public from(arg: string): Promise<ITrack[]> {
 		const url = arg;
 
 		return new Promise(async (resolve, reject) => {
@@ -29,7 +29,7 @@ export class YoutubeTrackFactory implements ITrackFactory {
 				lengthSeconds: trackInfo.videoDetails.lengthSeconds,
 			};
 
-			return resolve(new Track(trackData));
+			return resolve([new Track(trackData)]);
 		});
 	}
 }

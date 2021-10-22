@@ -94,8 +94,8 @@ export class MusicPlayer implements IMusicPlayer {
 		}
 	}
 
-	public enqueue(track: ITrack): IMusicPlayer {
-		this.playlist.push(track);
+	public enqueue(tracks: ITrack[]): IMusicPlayer {
+		this.playlist.push(...tracks);
 		this.triggerTrack();
 		return this;
 	}
@@ -118,7 +118,7 @@ export class MusicPlayer implements IMusicPlayer {
 	}
 
 	public clear(): IMusicPlayer {
-		this.playlist.length = 0;
+		this.playlist.length = 1;
 		return this;
 	}
 

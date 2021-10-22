@@ -1,16 +1,14 @@
 import i18n from "i18n";
 import { Command } from "../Command";
-import { Track } from "../../music/Track";
+import { ITrack } from "../../music/Track";
 import { CommandVerb } from "../VerbRegistry";
 import { ICommandDescription } from "../models/ICommandDescription";
 import { MessageEmbed, VoiceChannel } from "discord.js";
 import { PlayerLibrary } from "../../music/PlayerLibrary";
-import { ITrackFactory, KeywordsTrackFactory, YoutubeTrackFactory } from "../../music/Track/Factories";
+import * as factories from "../../music/Track/Factories";
 import { ErrorEmbed, SuccessEmbed } from "../embeds";
 
 export class PlayCommand extends Command {
-	private factories: ITrackFactory[] = [new YoutubeTrackFactory(), new KeywordsTrackFactory()];
-
 	constructor() {
 		super(CommandVerb.PLAY);
 	}
@@ -20,14 +18,16 @@ export class PlayCommand extends Command {
 
 		try {
 			const searchArg = keywords.join(" ");
-			const trackPromises: Promise<Track>[] = this.factories.map((factory) => factory.from(searchArg));
-			const track: Track = await Promise.any(trackPromises);
+			const trackPromises: Promise<ITrack[]>[] = Object.values(factories).map((factory) =>
+				factory.prototype.from(searchArg)
+			);
+			const tracks: ITrack[] = await Promise.any(trackPromises);
 
 			const playerLibrary = PlayerLibrary.Instance();
 			const voiceChannel = member?.voice.channel as VoiceChannel;
-			(playerLibrary.getFrom(voiceChannel) || (await playerLibrary.addTo(voiceChannel))).enqueue(track);
+			(playerLibrary.getFrom(voiceChannel) || (await playerLibrary.addTo(voiceChannel))).enqueue(tracks);
 
-			embedToSend = this.successEmbed(track);
+			embedToSend = this.successEmbed(tracks[0]);
 		} catch (err) {
 			embedToSend = this.errorEmbed(keywords.join(" "));
 		} finally {
@@ -35,7 +35,8 @@ export class PlayCommand extends Command {
 		}
 	}
 
-	private successEmbed = (track: Track) =>
+	// TODO: render when many songs have been added.
+	private successEmbed = (track: ITrack) =>
 		new SuccessEmbed()
 			.setTitle(i18n.__("play.added"))
 			.setThumbnail(track.getData().thumbnailURL || "")

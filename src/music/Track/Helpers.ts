@@ -4,9 +4,9 @@ export class Helpers {
 		return url.match(youtubeRegex);
 	}
 
-	// TODO
 	public static isYoutubePlaylist(url: string) {
-		return false;
+		const playlistRegex = /^.*(\/playlist\?list=).*$/;
+		return this.isYoutube(url) && url.match(playlistRegex);
 	}
 
 	public static isKeywords(keywords: string) {
