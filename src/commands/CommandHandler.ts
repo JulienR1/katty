@@ -1,7 +1,7 @@
 import { ICommand } from "./models/ICommand";
 import { CommandVerb } from "./VerbRegistry";
 import { CommandRequest } from "./CommandRequest";
-import { JoinCommand, KickCommand, NextCommand, PlayCommand, PauseCommand, ResumeCommand, QueueCommand, ClearCommand, LoopCommand, ShuffleCommand, MoveCommand, RemoveCommand } from "./implementations";
+import { JoinCommand, KickCommand, NextCommand, PlayCommand, PauseCommand, ResumeCommand, QueueCommand, ClearCommand, LoopCommand, ShuffleCommand, MoveCommand, RemoveCommand, PromoteCommand } from "./implementations";
 
 export class CommandHandler {
   private static instance: CommandHandler | undefined = undefined;
@@ -21,6 +21,7 @@ export class CommandHandler {
       new ShuffleCommand(),
       new MoveCommand(),
       new RemoveCommand(),
+      new PromoteCommand(),
     ];
 
     unmappedCommands.reduce((obj, command) => {

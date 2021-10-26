@@ -12,6 +12,7 @@ export enum CommandVerb {
   SHUFFLE = "Shuffle",
   MOVE = "Move",
   REMOVE = "Remove",
+  PROMOTE = "Promote",
 }
 
 export const VerbRegistry: { [key in CommandVerb]?: string[] } = {
@@ -27,4 +28,5 @@ export const VerbRegistry: { [key in CommandVerb]?: string[] } = {
   Shuffle: ["shuffle", "scramble", "randomize", "52-ramasse"],
   Move: ["move", "m"],
   Remove: ["remove"],
+  Promote: ["promote", "set"],
 };
