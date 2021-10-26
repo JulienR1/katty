@@ -10,6 +10,8 @@ export enum CommandVerb {
   LOOP = "Loop",
   CLEAR = "Clear",
   SHUFFLE = "Shuffle",
+  MOVE = "Move",
+  REMOVE = "Remove",
 }
 
 export const VerbRegistry: { [key in CommandVerb]?: string[] } = {
@@ -23,4 +25,6 @@ export const VerbRegistry: { [key in CommandVerb]?: string[] } = {
   Loop: ["loop", "l", "existentialisme"],
   Clear: ["clear", "c", "empty"],
   Shuffle: ["shuffle", "scramble", "randomize", "52-ramasse"],
+  Move: ["move", "m"],
+  Remove: ["remove"],
 };

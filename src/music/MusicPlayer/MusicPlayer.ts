@@ -124,17 +124,21 @@ export class MusicPlayer implements IMusicPlayer {
   }
 
   public move(trackIndex: number, targetIndex: number): IMusicPlayer {
-    if (this.playlist.length > trackIndex && this.playlist.length > targetIndex && trackIndex > 0 && targetIndex > 0 && targetIndex !== trackIndex) {
+    if (this.playlist && this.playlist.length > trackIndex && this.playlist.length > targetIndex && trackIndex > 0 && targetIndex > 0 && targetIndex !== trackIndex) {
       const targetTrack = this.playlist[targetIndex];
       this.playlist[targetIndex] = this.playlist[trackIndex];
       this.playlist[trackIndex] = targetTrack;
+    } else {
+      throw new Error("Invalid parameters in move.");
     }
     return this;
   }
 
   public remove(trackIndex: number): IMusicPlayer {
-    if (trackIndex > 0 && trackIndex < this.playlist.length) {
+    if (this.playlist && trackIndex > 0 && trackIndex < this.playlist.length) {
       this.playlist.splice(trackIndex, 1);
+    } else {
+      throw new Error("Invalid parameters in remove.");
     }
     return this;
   }

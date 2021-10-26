@@ -30,5 +30,18 @@
     "error": "Impossible de mettre à jour l'état de la boucle."
   },
   "shuffle": "Réorganisation de la file d'attente effectuée",
+  "remove": {
+    "title": "'__{{song}}__' a été retirée.",
+    "playingSong": "Utiliser la commande __skip__ pour retirer la chanson en cours.",
+    "wrongFormat": "Le format saisi est invalide.",
+    "error": "Impossible de retirer la chanson '{{songNumber}}'."
+  },
+  "move": {
+    "title": "Déplacement de '__{{song}}__' à la position {{position}}.",
+    "wrongFormat": "Le format saisi est invalide.",
+    "noSwap": "Aucun changement a effectuer.",
+    "playingSong": "Impossible de modifier la chanson en cours.",
+    "error": "Impossible de déplacer la chanson {{startIndex}} à {{targetIndex}}."
+  },
   "clear": "La file d'attente a été vidée."
 }

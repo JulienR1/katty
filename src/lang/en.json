@@ -30,5 +30,18 @@
     "error": "Cannot update the looping state."
   },
   "shuffle": "Queue shuffled",
+  "remove": {
+    "title": "'__{{song}}__' has been removed.",
+    "playingSong": "Use the __skip__ command to remove the current song.",
+    "wrongFormat": "The entered format is invalid.",
+    "error": "Cannot remove the song '{{songNumber}}'."
+  },
+  "move": {
+    "title": "Moving '__{{song}}__' to position {{position}}.",
+    "wrongFormat": "The specified format is invalid.",
+    "noSwap": "No changes to apply.",
+    "playingSong": "Cannot modify the current song.",
+    "error": "Cannot move the song from {{startIndex}} to {{targetIndex}}."
+  },
   "clear": "The queue has been cleared."
 }

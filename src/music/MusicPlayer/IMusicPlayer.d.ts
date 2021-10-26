@@ -15,9 +15,9 @@ export interface IMusicPlayer {
   next(): IMusicPlayer;
   clear(): IMusicPlayer;
   shuffle(): IMusicPlayer;
-  /******** TODO */
   move(trackIndex: number, targetIndex: number): IMusicPlayer;
   remove(trackIndex: number): IMusicPlayer;
+  /******** TODO */
   seek(timestamp: string): IMusicPlayer;
   /************* */
 
