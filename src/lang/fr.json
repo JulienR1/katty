@@ -1,47 +1,54 @@
 {
-  "error": "Erreur",
-  "errorDescription": "Une erreur est survenue.",
-  "success": "Succès",
-  "notConnected": {
-    "user": "Vous devez être connecté pour effectuer des commandes.",
-    "bot": "Katty doit être connectée pour effectuer cette commande."
-  },
-  "play": {
-    "added": "Chanson ajoutée à la file d'attente avec succès.",
-    "notFound": "Impossible de trouver __{{search}}__."
-  },
-  "next": {
-    "skipped": "Chanson annulée.",
-    "emptyQueue": "La file d'attente est vide.",
-    "nextSong": "À venir:"
-  },
-  "pause": ":pause_button: Pause",
-  "resume": ":play_pause: Reprise",
-  "queue": {
-    "title": "File d'attente",
-    "now": "En cours",
-    "empty": "*bruits_criquets.mp3*\nC'est vide par ici",
-    "nextNSongs": "{{songCount}} prochaines chansons"
-  },
-  "loop": {
-    "title": ":loop: Boucle: {{loopState}}",
-    "activeState": "Active",
-    "inactiveState": "Inactive",
-    "error": "Impossible de mettre à jour l'état de la boucle."
-  },
-  "shuffle": "Réorganisation de la file d'attente effectuée",
-  "remove": {
-    "title": "'__{{song}}__' a été retirée.",
-    "playingSong": "Utiliser la commande __skip__ pour retirer la chanson en cours.",
-    "wrongFormat": "Le format saisi est invalide.",
-    "error": "Impossible de retirer la chanson '{{songNumber}}'."
-  },
-  "move": {
-    "title": "Déplacement de '__{{song}}__' à la position {{position}}.",
-    "wrongFormat": "Le format saisi est invalide.",
-    "noSwap": "Aucun changement a effectuer.",
-    "playingSong": "Impossible de modifier la chanson en cours.",
-    "error": "Impossible de déplacer la chanson {{startIndex}} à {{targetIndex}}."
-  },
-  "clear": "La file d'attente a été vidée."
+	"error": "Erreur",
+	"errorDescription": "Une erreur est survenue.",
+	"success": "Succès",
+	"goodbye": {
+		"title": "Ciao!",
+		"message": "Yes {{username}}!"
+	},
+	"notConnected": {
+		"user": "Vous devez être connecté pour effectuer des commandes.",
+		"bot": "Katty doit être connectée pour effectuer cette commande."
+	},
+	"play": {
+		"added": "Chanson ajoutée à la file d'attente avec succès.",
+		"notFound": "Impossible de trouver __{{search}}__."
+	},
+	"next": {
+		"skipped": "Chanson annulée.",
+		"emptyQueue": "La file d'attente est vide.",
+		"nextSong": "À venir:"
+	},
+	"pause": ":pause_button: Pause",
+	"resume": ":play_pause: Reprise",
+	"queue": {
+		"title": "File d'attente",
+		"now": "En cours",
+		"empty": "*bruits_criquets.mp3*\nC'est vide par ici",
+		"nextNSongs": "{{songCount}} prochaines chansons"
+	},
+	"loop": {
+		"title": ":loop: Boucle: {{loopState}}",
+		"activeState": "Active",
+		"inactiveState": "Inactive",
+		"error": "Impossible de mettre à jour l'état de la boucle."
+	},
+	"shuffle": "Réorganisation de la file d'attente effectuée",
+	"remove": {
+		"title": "'__{{song}}__' a été retirée.",
+		"playingSong": "Utiliser la commande __skip__ pour retirer la chanson en cours.",
+		"wrongFormat": "Le format saisi est invalide.",
+		"error": "Impossible de retirer la chanson '{{songNumber}}'."
+	},
+	"move": {
+		"title": "Déplacement de '__{{song}}__' à la position {{position}}.",
+		"wrongFormat": "Le format saisi est invalide.",
+		"noSwap": "Aucun changement a effectuer.",
+		"playingSong": "Impossible de modifier la chanson en cours.",
+		"error": "Impossible de déplacer la chanson {{startIndex}} à {{targetIndex}}."
+	},
+	"clear": "La file d'attente a été vidée.",
+	"goddbye": {
+		"title": "goddbye.title"
+	}
 }
