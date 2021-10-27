@@ -1,12 +1,12 @@
-import { Awaited, Client, ClientEvents } from "discord.js";
+import { Awaitable, Client, ClientEvents } from "discord.js";
 
 export abstract class DiscordEvent {
-	protected katty: Client | undefined = undefined;
-	public abstract eventName: keyof ClientEvents;
+  protected katty: Client | undefined = undefined;
+  public abstract eventName: keyof ClientEvents;
 
-	setKatty(katty: Client): void {
-		this.katty = katty;
-	}
+  setKatty(katty: Client): void {
+    this.katty = katty;
+  }
 
-	abstract onEvent(...args: ClientEvents[keyof ClientEvents]): Awaited<void> | Promise<Awaited<void>>;
+  abstract onEvent(...args: ClientEvents[keyof ClientEvents]): Awaitable<void> | Promise<Awaitable<void>>;
 }
