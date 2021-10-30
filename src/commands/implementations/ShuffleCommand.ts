@@ -7,30 +7,30 @@ import { CommandVerb } from "../VerbRegistry";
 import i18n from "i18n";
 
 export class ShuffleCommand extends Command {
-  constructor() {
-    super(CommandVerb.SHUFFLE);
-  }
+	constructor() {
+		super(CommandVerb.SHUFFLE, i18n.__("description.shuffle"));
+	}
 
-  public execute({ member, channel }: ICommandDescription): void {
-    const musicPlayer = PlayerLibrary.Instance().getFrom(member?.voice.channel as VoiceChannel);
-    if (!musicPlayer) {
-      channel.send({ embeds: [new BotNotConnectedEmbed()] });
-      return;
-    }
+	public execute({ member, channel }: ICommandDescription): void {
+		const musicPlayer = PlayerLibrary.Instance().getFrom(member?.voice.channel as VoiceChannel);
+		if (!musicPlayer) {
+			channel.send({ embeds: [new BotNotConnectedEmbed()] });
+			return;
+		}
 
-    let embedToSend = new MessageEmbed();
-    try {
-      musicPlayer.shuffle();
-      embedToSend = this.successEmbed();
-    } catch (err) {
-      embedToSend = this.errorEmbed();
-      console.log(err);
-    } finally {
-      channel.send({ embeds: [embedToSend] });
-    }
-  }
+		let embedToSend = new MessageEmbed();
+		try {
+			musicPlayer.shuffle();
+			embedToSend = this.successEmbed();
+		} catch (err) {
+			embedToSend = this.errorEmbed();
+			console.log(err);
+		} finally {
+			channel.send({ embeds: [embedToSend] });
+		}
+	}
 
-  private successEmbed = () => new SuccessEmbed().setTitle(i18n.__("shuffle"));
+	private successEmbed = () => new SuccessEmbed().setTitle(i18n.__("shuffle"));
 
-  private errorEmbed = () => new ErrorEmbed();
+	private errorEmbed = () => new ErrorEmbed();
 }

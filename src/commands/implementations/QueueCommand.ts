@@ -11,7 +11,7 @@ import { BotNotConnectedEmbed, SuccessEmbed } from "../embeds";
 
 export class QueueCommand extends Command {
 	constructor() {
-		super(CommandVerb.QUEUE);
+		super(CommandVerb.QUEUE, i18n.__("description.queue"));
 	}
 
 	public async execute({ member, channel }: ICommandDescription): Promise<void> {

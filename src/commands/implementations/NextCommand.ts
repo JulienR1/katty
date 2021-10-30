@@ -9,7 +9,7 @@ import { BotNotConnectedEmbed, ErrorEmbed, SuccessEmbed } from "../embeds";
 
 export class NextCommand extends Command {
 	constructor() {
-		super(CommandVerb.NEXT);
+		super(CommandVerb.NEXT, i18n.__("description.next"));
 	}
 
 	public execute({ member, channel }: ICommandDescription): void {

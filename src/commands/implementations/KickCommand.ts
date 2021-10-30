@@ -3,10 +3,11 @@ import { PlayerLibrary } from "../../music/PlayerLibrary";
 import { Command } from "../Command";
 import { ICommandDescription } from "../models/ICommandDescription";
 import { CommandVerb } from "../VerbRegistry";
+import i18n from "i18n";
 
 export class KickCommand extends Command {
 	constructor() {
-		super(CommandVerb.KICK);
+		super(CommandVerb.KICK, i18n.__("description.kick"));
 	}
 
 	public execute({ member }: ICommandDescription): void {

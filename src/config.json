@@ -1,10 +1,10 @@
 {
-    "commandPrefix": "!",
-    "voiceCommunication": {
-        "maxLoadTime": 30e3,
-        "maxIdleTime": 900e3,
-        "notifyOnLeave": true
-    },
-    "language": "fr",
-    "songsToDisplayInQueue": 10
+	"commandPrefix": "!",
+	"voiceCommunication": {
+		"maxLoadTime": 30e3,
+		"maxIdleTime": 900e3,
+		"notifyOnLeave": true
+	},
+	"language": "fr",
+	"songsToDisplayInQueue": 10
 }

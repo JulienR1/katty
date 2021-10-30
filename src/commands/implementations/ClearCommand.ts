@@ -8,7 +8,7 @@ import i18n from "i18n";
 
 export class ClearCommand extends Command {
 	constructor() {
-		super(CommandVerb.CLEAR);
+		super(CommandVerb.CLEAR, i18n.__("description.clear"));
 	}
 
 	public async execute({ member, channel }: ICommandDescription) {
