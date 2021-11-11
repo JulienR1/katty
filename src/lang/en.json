@@ -29,7 +29,8 @@
 	},
 	"play": {
 		"added": "Sucessfully added to the queue.",
-		"notFound": "Cannot find __{{search}}__."
+		"notFound": "Cannot find __{{search}}__.",
+		"tooLong": "Cannot play a song longer than {{maxTime}} minutes."
 	},
 	"next": {
 		"skipped": "Skipped song.",

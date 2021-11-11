@@ -29,7 +29,8 @@
 	},
 	"play": {
 		"added": "Chanson ajoutée à la file d'attente avec succès.",
-		"notFound": "Impossible de trouver __{{search}}__."
+		"notFound": "Impossible de trouver __{{search}}__.",
+		"tooLong": "Impossible de faire jouer une chanson de plus de {{maxTime}} minutes."
 	},
 	"next": {
 		"skipped": "Chanson annulée.",

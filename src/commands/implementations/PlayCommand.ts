@@ -1,6 +1,6 @@
 import i18n from "i18n";
 import { Command } from "../Command";
-import { ITrack } from "../../music/Track";
+import { ITrack, TrackError } from "../../music/Track";
 import { CommandVerb } from "../VerbRegistry";
 import { ICommandDescription } from "../models/ICommandDescription";
 import { MessageEmbed, TextBasedChannels, VoiceChannel } from "discord.js";
@@ -22,6 +22,7 @@ export class PlayCommand extends Command {
 			const trackPromises: Promise<ITrack[]>[] = Object.values(factories).map((factory) =>
 				factory.prototype.from(searchArg)
 			);
+
 			const tracks: ITrack[] = await Promise.any(trackPromises);
 
 			const playerLibrary = PlayerLibrary.Instance();
@@ -32,8 +33,12 @@ export class PlayCommand extends Command {
 			).enqueue(tracks);
 
 			embedToSend = this.successEmbed(tracks[0]);
-		} catch (err) {
-			embedToSend = this.errorEmbed(keywords.join(" "));
+		} catch (err: unknown) {
+			if (err instanceof AggregateError && err.errors.find((error) => error instanceof TrackError)) {
+				embedToSend = this.tooLongEmbed();
+			} else {
+				embedToSend = this.errorEmbed(keywords.join(" "));
+			}
 		} finally {
 			channel.send({ embeds: [embedToSend] });
 		}
@@ -47,6 +52,9 @@ export class PlayCommand extends Command {
 			.setDescription(`[${track.getData().title}](${track.getData().url})`);
 
 	private errorEmbed = (search: string) => new ErrorEmbed().setDescription(i18n.__("play.notFound", { search }));
+
+	private tooLongEmbed = () =>
+		new ErrorEmbed().setDescription(i18n.__("play.tooLong", { maxTime: config.songMaxLengthInMinutes.toString() }));
 
 	private goodbyeEmbed = (channel: TextBasedChannels, voiceChannel: VoiceChannel) => {
 		if (voiceChannel.members.size > 1 && config.voiceCommunication.notifyOnLeave) {

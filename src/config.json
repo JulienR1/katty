@@ -6,5 +6,6 @@
 		"notifyOnLeave": true
 	},
 	"language": "fr",
-	"songsToDisplayInQueue": 10
+	"songsToDisplayInQueue": 10,
+	"songMaxLengthInMinutes": 60
 }
