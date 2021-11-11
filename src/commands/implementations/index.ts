@@ -11,5 +11,21 @@ import { ShuffleCommand } from "./ShuffleCommand";
 import { MoveCommand } from "./MoveCommand";
 import { RemoveCommand } from "./RemoveCommand";
 import { PromoteCommand } from "./PromoteCommand";
+import { HelpCommand } from "./HelpCommand";
 
-export { JoinCommand, KickCommand, PlayCommand, NextCommand, PauseCommand, ResumeCommand, QueueCommand, ClearCommand, LoopCommand, ShuffleCommand, MoveCommand, RemoveCommand, PromoteCommand };
+export {
+	JoinCommand,
+	KickCommand,
+	PlayCommand,
+	NextCommand,
+	PauseCommand,
+	ResumeCommand,
+	QueueCommand,
+	ClearCommand,
+	LoopCommand,
+	ShuffleCommand,
+	MoveCommand,
+	RemoveCommand,
+	PromoteCommand,
+	HelpCommand,
+};

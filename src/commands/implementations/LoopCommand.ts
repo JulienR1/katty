@@ -8,7 +8,7 @@ import i18n from "i18n";
 
 export class LoopCommand extends Command {
 	constructor() {
-		super(CommandVerb.LOOP);
+		super(CommandVerb.LOOP, i18n.__("description.loop"));
 	}
 
 	public execute({ member, channel }: ICommandDescription): void {

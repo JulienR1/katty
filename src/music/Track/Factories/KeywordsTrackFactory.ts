@@ -26,7 +26,12 @@ export class KeywordsTrackFactory implements ITrackFactory {
 				lengthSeconds: videoData.seconds.toString(),
 			};
 
-			return resolve([new Track(trackData)]);
+			try {
+				const track = new Track(trackData);
+				return resolve([track]);
+			} catch (err: any) {
+				return reject(err);
+			}
 		});
 	}
 }

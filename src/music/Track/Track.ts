@@ -1,16 +1,18 @@
 import { AudioResource, createAudioResource, demuxProbe } from "@discordjs/voice";
 import { Options, ExecaChildProcess } from "execa";
 import { ITrack, ITrackData } from "./ITrack";
+import { TrackError } from "./TrackError";
 import { raw } from "youtube-dl-exec";
 import { Readable } from "stream";
+import * as config from "./../../config.json";
 
 export class Track implements ITrack {
 	private downloadFlags = { o: "-", q: "", f: "bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio", r: "100K" };
 	private downloadOptions: Options<string> = { stdio: ["ignore", "pipe", "ignore"] };
 
 	constructor(private trackData: ITrackData) {
-		if (parseInt(this.trackData.lengthSeconds) >= 3600) {
-			throw new Error("Cannot play a song longer than 60 minutes.");
+		if (parseInt(this.trackData.lengthSeconds) >= config.songMaxLengthInMinutes * 60) {
+			throw new TrackError(`Cannot play a song longer than ${config.songMaxLengthInMinutes} minutes.`);
 		}
 	}
 

@@ -10,9 +10,27 @@
 		"user": "Vous devez être connecté pour effectuer des commandes.",
 		"bot": "Katty doit être connectée pour effectuer cette commande."
 	},
+	"help": "Liste des commandes",
+	"description": {
+		"clear": "Retire toutes les chansons de la file d'attente",
+		"help": "Affiche une description des commandes",
+		"join": "Appelle Katty dans le salon en cours",
+		"kick": "Déconnecte Katty du salon en cours",
+		"loop": "Fais jouer la chanson en cours en boucle",
+		"move": "Déplace une chanson de la position `n` à la position `m`",
+		"next": "Passe à la prochain chanson",
+		"pause": "Met la diffusion sur pause",
+		"play": "Fais jouer la chanson spécifiée",
+		"promote": "Déplace la chanson spécifiée à la position 1",
+		"queue": "Affiche la liste de lecture",
+		"remove": "Retire la chanson spécifiée",
+		"resume": "Continue la diffusion lorsque sur pause",
+		"shuffle": "Mélange la liste de lecture"
+	},
 	"play": {
 		"added": "Chanson ajoutée à la file d'attente avec succès.",
-		"notFound": "Impossible de trouver __{{search}}__."
+		"notFound": "Impossible de trouver __{{search}}__.",
+		"tooLong": "Impossible de faire jouer une chanson de plus de {{maxTime}} minutes."
 	},
 	"next": {
 		"skipped": "Chanson annulée.",
@@ -47,8 +65,5 @@
 		"playingSong": "Impossible de modifier la chanson en cours.",
 		"error": "Impossible de déplacer la chanson {{startIndex}} à {{targetIndex}}."
 	},
-	"clear": "La file d'attente a été vidée.",
-	"goddbye": {
-		"title": "goddbye.title"
-	}
+	"clear": "La file d'attente a été vidée."
 }

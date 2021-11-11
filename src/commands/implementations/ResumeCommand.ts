@@ -8,7 +8,7 @@ import { CommandVerb } from "../VerbRegistry";
 
 export class ResumeCommand extends Command {
 	constructor() {
-		super(CommandVerb.RESUME);
+		super(CommandVerb.RESUME, i18n.__("description.resume"));
 	}
 
 	public execute({ channel, member }: ICommandDescription): void {

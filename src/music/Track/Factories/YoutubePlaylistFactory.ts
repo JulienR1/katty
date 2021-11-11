@@ -13,17 +13,22 @@ export class YoutubePlaylistTrackFactory implements ITrackFactory {
 			}
 
 			const { items } = await ytpl(url, { limit: Infinity });
-			const tracks: ITrack[] = items.map(
-				(playlistItem) =>
-					new Track({
-						title: playlistItem.title,
-						url: playlistItem.shortUrl,
-						thumbnailURL: playlistItem.thumbnails[1].url || "",
-						lengthSeconds: playlistItem.durationSec?.toString() || "0",
-					})
-			);
 
-			return resolve(tracks);
+			try {
+				const tracks: ITrack[] = items.map(
+					(playlistItem) =>
+						new Track({
+							title: playlistItem.title,
+							url: playlistItem.shortUrl,
+							thumbnailURL: playlistItem.thumbnails[1].url || "",
+							lengthSeconds: playlistItem.durationSec?.toString() || "0",
+						})
+				);
+
+				return resolve(tracks);
+			} catch (err: any) {
+				return reject(err);
+			}
 		});
 	}
 }

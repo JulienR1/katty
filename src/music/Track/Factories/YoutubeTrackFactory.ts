@@ -29,7 +29,12 @@ export class YoutubeTrackFactory implements ITrackFactory {
 				lengthSeconds: trackInfo.videoDetails.lengthSeconds,
 			};
 
-			return resolve([new Track(trackData)]);
+			try {
+				const track = new Track(trackData);
+				return resolve([track]);
+			} catch (err: any) {
+				return reject(err);
+			}
 		});
 	}
 }

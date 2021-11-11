@@ -8,7 +8,7 @@ import { CommandVerb } from "../VerbRegistry";
 
 export class PauseCommand extends Command {
 	constructor() {
-		super(CommandVerb.PAUSE);
+		super(CommandVerb.PAUSE, i18n.__("description.pause"));
 	}
 
 	public execute({ channel, member }: ICommandDescription): void {
