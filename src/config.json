@@ -1,11 +1,11 @@
 {
 	"commandPrefix": "!",
 	"voiceCommunication": {
-		"maxLoadTime": 30e3,
+		"maxLoadTime": 15e3,
 		"maxIdleTime": 900e3,
-		"notifyOnLeave": true
+		"notifyOnLeave": false
 	},
 	"language": "fr",
 	"songsToDisplayInQueue": 10,
-	"songMaxLengthInMinutes": 60
+	"songMaxLengthInMinutes": 70
 }
