@@ -1,6 +1,12 @@
 import { BitFieldResolvable, Client, Intents, IntentsString } from "discord.js";
-import { getCommandHandler, getSlashCommands } from "./commands";
-import { env, i18n, postSlashCommands } from "./configuration";
+import "./commands";
+import { env, i18n } from "./configuration";
+import {
+  getCommandHandler,
+  getSlashCommands,
+  getVoiceChannel,
+  postSlashCommands,
+} from "./packages/discord-command-handler";
 
 env.setup();
 i18n.setup();
@@ -28,9 +34,10 @@ client.on("ready", async (e) => {
 });
 
 client.on("interactionCreate", async (interaction) => {
-  if (interaction.isCommand()) {
+  if (interaction.isCommand() && interaction.isRepliable()) {
+    const voiceChannel = getVoiceChannel(interaction);
     const handle = getCommandHandler(interaction.commandName);
-    handle(interaction);
+    handle({ interaction, voiceChannel });
   }
 });
 

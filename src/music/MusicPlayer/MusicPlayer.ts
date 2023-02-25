@@ -1,4 +1,13 @@
-import { AudioPlayer, AudioPlayerState, AudioPlayerStatus, createAudioPlayer, entersState, joinVoiceChannel, VoiceConnection, VoiceConnectionStatus } from "@discordjs/voice";
+import {
+  AudioPlayer,
+  AudioPlayerState,
+  AudioPlayerStatus,
+  createAudioPlayer,
+  entersState,
+  joinVoiceChannel,
+  VoiceConnection,
+  VoiceConnectionStatus,
+} from "@discordjs/voice";
 import { VoiceChannel } from "discord.js";
 import { IMusicPlayer } from ".";
 import { createDiscordJSAdapter } from "../../voiceAdapter/JsAdapter";
@@ -18,11 +27,19 @@ export class MusicPlayer implements IMusicPlayer {
     this.voiceChannel = initialVoiceChannel;
 
     this.audioPlayer = createAudioPlayer();
-    this.audioPlayer.on("stateChange", (oldState, newState) => this.onPlayerStateChange(oldState, newState));
+    // this.audioPlayer.on("stateChange", (oldState, newState) =>
+    //   this.onPlayerStateChange(oldState, newState)
+    // );
   }
 
-  private onPlayerStateChange(oldState: AudioPlayerState, newState: AudioPlayerState) {
-    if (newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
+  private onPlayerStateChange(
+    oldState: AudioPlayerState,
+    newState: AudioPlayerState
+  ) {
+    if (
+      newState.status === AudioPlayerStatus.Idle &&
+      oldState.status !== AudioPlayerStatus.Idle
+    ) {
       if (!this.isLooping) {
         this.playlist.shift();
       }
@@ -48,7 +65,10 @@ export class MusicPlayer implements IMusicPlayer {
       return false;
     }
 
-    const disconnectedStatuses = [VoiceConnectionStatus.Disconnected, VoiceConnectionStatus.Destroyed];
+    const disconnectedStatuses = [
+      VoiceConnectionStatus.Disconnected,
+      VoiceConnectionStatus.Destroyed,
+    ];
     return !disconnectedStatuses.includes(this.voiceConnection.state.status);
   }
 
@@ -68,7 +88,11 @@ export class MusicPlayer implements IMusicPlayer {
     });
 
     try {
-      await entersState(connection, VoiceConnectionStatus.Ready, config.voiceCommunication.maxLoadTime);
+      await entersState(
+        connection,
+        VoiceConnectionStatus.Ready,
+        config.voiceCommunication.maxLoadTime
+      );
       connection.subscribe(this.audioPlayer);
       this.voiceConnection = connection;
     } catch (err) {
@@ -124,7 +148,14 @@ export class MusicPlayer implements IMusicPlayer {
   }
 
   public move(trackIndex: number, targetIndex: number): IMusicPlayer {
-    if (this.playlist && this.playlist.length > trackIndex && this.playlist.length > targetIndex && trackIndex > 0 && targetIndex > 0 && targetIndex !== trackIndex) {
+    if (
+      this.playlist &&
+      this.playlist.length > trackIndex &&
+      this.playlist.length > targetIndex &&
+      trackIndex > 0 &&
+      targetIndex > 0 &&
+      targetIndex !== trackIndex
+    ) {
       const targetTrack = this.playlist[targetIndex];
       this.playlist[targetIndex] = this.playlist[trackIndex];
       this.playlist[trackIndex] = targetTrack;

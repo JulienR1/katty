@@ -1,15 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CacheType, Interaction } from "discord.js";
+import { IDiscordCommand } from "./types";
 
 type NoSpaceString<S> = S extends `${string} ${string}` ? never : S;
 type DiscordCommandOptions<S extends string> = {
   name: NoSpaceString<Lowercase<S>>;
   description: string;
 };
-
-interface IDiscordCommand {
-  handle(interaction: Interaction<CacheType>): void;
-}
 
 type IDiscordCommandHandler = IDiscordCommand["handle"];
 type IDiscordCommandConstructor = new () => IDiscordCommand;

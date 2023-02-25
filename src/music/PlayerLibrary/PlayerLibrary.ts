@@ -1,87 +1,94 @@
 import { VoiceChannel } from "discord.js";
-import { IPlayerLibrary } from "./IPlayerLibrary";
 import { IMusicPlayer, MusicPlayer } from "../MusicPlayer";
 import config from "./../../config.json";
+import { IPlayerLibrary } from "./IPlayerLibrary";
 
 interface IRegisteredPlayer {
-    player: IMusicPlayer;
-    timeout: NodeJS.Timeout;
-    onLeave: () => void;
+  player: IMusicPlayer;
+  timeout: NodeJS.Timeout;
+  onLeave: () => void;
 }
 
 export class PlayerLibrary implements IPlayerLibrary {
-    private static instance: IPlayerLibrary | undefined = undefined;
+  private static instance: IPlayerLibrary | undefined = undefined;
 
-    private players: { [key: string]: IRegisteredPlayer };
+  private players: { [key: string]: IRegisteredPlayer };
 
-    constructor() {
-        this.players = {};
+  constructor() {
+    this.players = {};
+  }
+
+  public static Instance() {
+    if (PlayerLibrary.instance === undefined) {
+      PlayerLibrary.instance = new PlayerLibrary();
+    }
+    return PlayerLibrary.instance;
+  }
+
+  public addTo(
+    voiceChannel: VoiceChannel,
+    onLeave: () => void
+  ): Promise<IMusicPlayer> {
+    if (this.getFrom(voiceChannel)?.isVoiceConnected(voiceChannel)) {
+      throw new Error("The provided channel already has a music player.");
     }
 
-    public static Instance() {
-        if (PlayerLibrary.instance === undefined) {
-            PlayerLibrary.instance = new PlayerLibrary();
-        }
-        return PlayerLibrary.instance;
+    const key = this.getKeyFrom(voiceChannel);
+    if (this.players[key]) {
+      // If a player returns to a previous server before its cd is over.
+      clearTimeout(this.players[key].timeout);
     }
 
-    public addTo(voiceChannel: VoiceChannel, onLeave: () => void): Promise<IMusicPlayer> {
-        if (this.getFrom(voiceChannel)?.isVoiceConnected(voiceChannel)) {
-            throw new Error("The provided channel already has a music player.");
-        }
+    const player = new MusicPlayer(voiceChannel);
+    const timeout = this.generateTimeout(voiceChannel);
+    this.players[key] = { player, timeout, onLeave };
 
-        const key = this.getKeyFrom(voiceChannel);
-        if (this.players[key]) {
-            // If a player returns to a previous server before its cd is over.
-            clearTimeout(this.players[key].timeout);
-        }
+    return player.join(voiceChannel);
+  }
 
-        const player = new MusicPlayer(voiceChannel);
-        const timeout = this.generateTimeout(voiceChannel);
-        this.players[key] = { player, timeout, onLeave };
+  public getFrom(voiceChannel: VoiceChannel): IMusicPlayer | undefined {
+    const registeredPlayer = this.players[this.getKeyFrom(voiceChannel)];
+    if (registeredPlayer) {
+      this.refreshExitTimer(voiceChannel);
+      return registeredPlayer.player;
+    }
+    return undefined;
+  }
 
-        return player.join(voiceChannel);
+  public removeFrom(voiceChannel: VoiceChannel): void {
+    if (!this.getFrom(voiceChannel)) {
+      throw new Error("Cannot remove an unexisting player.");
     }
 
-    public getFrom(voiceChannel: VoiceChannel): IMusicPlayer | undefined {
-        const registeredPlayer = this.players[this.getKeyFrom(voiceChannel)];
-        if (registeredPlayer) {
-            this.refreshExitTimer(voiceChannel);
-            return registeredPlayer.player;
-        }
-        return undefined;
-    }
+    const key = this.getKeyFrom(voiceChannel);
+    this.players[key].player.leave();
+    this.players[key].onLeave();
 
-    public removeFrom(voiceChannel: VoiceChannel): void {
-        if (!this.getFrom(voiceChannel)) {
-            throw new Error("Cannot remove an unexisting player.");
-        }
+    clearTimeout(this.players[key].timeout);
+    delete this.players[key];
+  }
 
-        const key = this.getKeyFrom(voiceChannel);
-        this.players[key].player.leave();
-        this.players[key].onLeave();
+  private getKeyFrom(voiceChannel: VoiceChannel): string {
+    return `${voiceChannel.guildId}-${voiceChannel.id}`;
+  }
 
-        clearTimeout(this.players[key].timeout);
-        delete this.players[key];
-    }
+  private refreshExitTimer(voiceChannel: VoiceChannel) {
+    clearTimeout(this.players[this.getKeyFrom(voiceChannel)].timeout);
+    this.players[this.getKeyFrom(voiceChannel)].timeout =
+      this.generateTimeout(voiceChannel);
+  }
 
-    private getKeyFrom(voiceChannel: VoiceChannel): string {
-        return `${voiceChannel.guildId}-${voiceChannel.id}`;
-    }
-
-    private refreshExitTimer(voiceChannel: VoiceChannel) {
-        clearTimeout(this.players[this.getKeyFrom(voiceChannel)].timeout);
-        this.players[this.getKeyFrom(voiceChannel)].timeout = this.generateTimeout(voiceChannel);
-    }
-
-    private generateTimeout(voiceChannel: VoiceChannel): NodeJS.Timeout {
-        return setTimeout(() => {
-            const subscribedPlayer = this.players[this.getKeyFrom(voiceChannel)];
-            if (subscribedPlayer?.player.isVoiceConnected(voiceChannel) && subscribedPlayer.player.getQueue().length > 0) {
-                subscribedPlayer.timeout = this.generateTimeout(voiceChannel);
-            } else {
-                this.removeFrom(voiceChannel);
-            }
-        }, config.voiceCommunication.maxIdleTime);
-    }
+  private generateTimeout(voiceChannel: VoiceChannel): NodeJS.Timeout {
+    return setTimeout(() => {
+      const subscribedPlayer = this.players[this.getKeyFrom(voiceChannel)];
+      if (
+        subscribedPlayer?.player.isVoiceConnected(voiceChannel) &&
+        subscribedPlayer.player.getQueue().length > 0
+      ) {
+        subscribedPlayer.timeout = this.generateTimeout(voiceChannel);
+      } else {
+        this.removeFrom(voiceChannel);
+      }
+    }, config.voiceCommunication.maxIdleTime);
+  }
 }

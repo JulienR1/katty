@@ -1,3 +1,2 @@
-import "./test";
-
-export * from "./DiscordCommand";
+import "./JoinCommand";
+import "./KickCommand";
