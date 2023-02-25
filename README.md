@@ -1,3 +1,6 @@
 # Katty
 
-Katty will sing for us in our discord channels.
+### Packages
+
+- `app`: The actual Discord bot
+- `discord-command-handler`: A super simple slash-command wrapper

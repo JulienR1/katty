@@ -8,9 +8,8 @@ import {
   VoiceConnection,
   VoiceConnectionStatus,
 } from "@discordjs/voice";
-import { VoiceChannel } from "discord.js";
+import { VoiceBasedChannel, VoiceChannel } from "discord.js";
 import { IMusicPlayer } from ".";
-import { createDiscordJSAdapter } from "../../voiceAdapter/JsAdapter";
 import { ITrack, ITrackData } from "../Track";
 import config from "./../../config.json";
 
@@ -76,7 +75,7 @@ export class MusicPlayer implements IMusicPlayer {
     return this.isLooping;
   }
 
-  public async join(channel: VoiceChannel): Promise<IMusicPlayer> {
+  public async join(channel: VoiceBasedChannel): Promise<IMusicPlayer> {
     if (!channel) {
       throw new Error("No channel to connect to.");
     }
@@ -84,7 +83,7 @@ export class MusicPlayer implements IMusicPlayer {
     const connection = joinVoiceChannel({
       channelId: channel.id,
       guildId: channel.guild.id,
-      adapterCreator: createDiscordJSAdapter(channel),
+      adapterCreator: channel.guild.voiceAdapterCreator as any, //createDiscordJSAdapter(channel),
     });
 
     try {

@@ -7,7 +7,8 @@ import path from "path";
 export const postSlashCommands = async (
   commands: ReturnType<SlashCommandBuilder["toJSON"]>[],
   guildIds: string[],
-  applicationId: string
+  applicationId: string,
+  discordToken: string
 ) => {
   const requiresUpdate = updateRegistry(
     commands.map((command) => command.name)
@@ -17,7 +18,7 @@ export const postSlashCommands = async (
     return;
   }
 
-  const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
+  const rest = new REST({ version: "10" }).setToken(discordToken);
   const promises = guildIds.map((guildId) => {
     rest.put(Routes.applicationGuildCommands(applicationId, guildId), {
       body: commands,

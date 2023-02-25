@@ -1,23 +1,19 @@
-import { BitFieldResolvable, Client, Intents, IntentsString } from "discord.js";
 import "./commands";
-import { env, i18n } from "./configuration";
+
 import {
   getCommandHandler,
   getSlashCommands,
-  getVoiceChannel,
   postSlashCommands,
-} from "./packages/discord-command-handler";
+} from "discord-command-handler";
+import { Client, GuildMember } from "discord.js";
+import { env, i18n } from "./configuration";
 
 env.setup();
 i18n.setup();
 
-const intents: BitFieldResolvable<IntentsString, number> = [
-  Intents.FLAGS.GUILDS,
-  Intents.FLAGS.GUILD_MESSAGES,
-  Intents.FLAGS.GUILD_VOICE_STATES,
-];
-
-const client = new Client({ intents });
+const client = new Client({
+  intents: ["Guilds", "GuildVoiceStates", "GuildMessages"],
+});
 
 client.on("ready", async (e) => {
   if (e.application.id === undefined) {
@@ -28,14 +24,23 @@ client.on("ready", async (e) => {
   const guilds = await client.guilds.fetch();
   const guildIds = guilds.map((guild) => guild.id);
 
-  await postSlashCommands(commands, guildIds, e.application.id);
+  await postSlashCommands(
+    commands,
+    guildIds,
+    e.application.id,
+    process.env.DISCORD_TOKEN
+  );
 
   console.log(`Logged in as ${client?.user?.tag}`);
 });
 
 client.on("interactionCreate", async (interaction) => {
   if (interaction.isCommand() && interaction.isRepliable()) {
-    const voiceChannel = getVoiceChannel(interaction);
+    const voiceChannel =
+      interaction.member instanceof GuildMember
+        ? interaction.member.voice.channel
+        : null;
+
     const handle = getCommandHandler(interaction.commandName);
     handle({ interaction, voiceChannel });
   }

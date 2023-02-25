@@ -1,8 +1,5 @@
+import { DiscordCommand, HandleCommandParams } from "discord-command-handler";
 import { PlayerLibrary } from "../music/PlayerLibrary";
-import {
-  DiscordCommand,
-  HandleCommandParams,
-} from "../packages/discord-command-handler";
 import { acknowledge, refuse } from "../responses";
 
 @DiscordCommand({ name: "join", description: "Summon Katty" })
