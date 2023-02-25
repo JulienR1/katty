@@ -1,26 +1,41 @@
-import dotenv from "dotenv";
-import i18n from "i18n";
-import * as config from "./config.json";
 import { BitFieldResolvable, Client, Intents, IntentsString } from "discord.js";
-import { DiscordEventHandler } from "./events/DiscordEventHandler";
-import path from "path";
+import { getCommandHandler, getSlashCommands } from "./commands";
+import { env, i18n, postSlashCommands } from "./configuration";
 
-dotenv.config();
-
-i18n.configure({
-	locales: ["en", "fr"],
-	defaultLocale: "en",
-	directory: path.join(__dirname, "lang"),
-	objectNotation: true,
-});
-i18n.setLocale(config.language);
+env.setup();
+i18n.setup();
 
 const intents: BitFieldResolvable<IntentsString, number> = [
-	Intents.FLAGS.GUILDS,
-	Intents.FLAGS.GUILD_MESSAGES,
-	Intents.FLAGS.GUILD_VOICE_STATES,
+  Intents.FLAGS.GUILDS,
+  Intents.FLAGS.GUILD_MESSAGES,
+  Intents.FLAGS.GUILD_VOICE_STATES,
 ];
 
-const katty = new Client({ intents });
-DiscordEventHandler.Instance().bindEvents(katty);
-katty.login(process.env.DISCORD_TOKEN);
+const client = new Client({ intents });
+
+client.on("ready", async (e) => {
+  if (e.application.id === undefined) {
+    throw new Error("Could not find application id.");
+  }
+
+  const commands = getSlashCommands();
+  const guilds = await client.guilds.fetch();
+  const guildIds = guilds.map((guild) => guild.id);
+
+  await postSlashCommands(commands, guildIds, e.application.id);
+
+  console.log(`Logged in as ${client?.user?.tag}`);
+});
+
+client.on("interactionCreate", async (interaction) => {
+  if (interaction.isCommand()) {
+    const handle = getCommandHandler(interaction.commandName);
+    handle(interaction);
+  }
+});
+
+client.on("error", (err) => {
+  console.error(err);
+});
+
+client.login(process.env.DISCORD_TOKEN);
