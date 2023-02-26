@@ -1,4 +1,4 @@
-import { VoiceBasedChannel, VoiceChannel } from "discord.js";
+import { VoiceBasedChannel } from "discord.js";
 import config from "../config.json";
 import { MusicPlayer } from "./MusicPlayer";
 
@@ -25,7 +25,7 @@ export class PlayerLibrary {
   }
 
   public addTo(
-    voiceChannel: VoiceChannel,
+    voiceChannel: VoiceBasedChannel,
     onLeave: () => void
   ): Promise<MusicPlayer> {
     if (this.getFrom(voiceChannel)?.isVoiceConnected(voiceChannel)) {
@@ -45,9 +45,7 @@ export class PlayerLibrary {
     return player.join(voiceChannel);
   }
 
-  public getFrom(
-    voiceChannel: VoiceChannel | VoiceBasedChannel
-  ): MusicPlayer | undefined {
+  public getFrom(voiceChannel: VoiceBasedChannel): MusicPlayer | undefined {
     const registeredPlayer = this.players[this.getKeyFrom(voiceChannel)];
     if (registeredPlayer) {
       this.refreshExitTimer(voiceChannel);
@@ -56,7 +54,7 @@ export class PlayerLibrary {
     return undefined;
   }
 
-  public removeFrom(voiceChannel: VoiceChannel | VoiceBasedChannel): void {
+  public removeFrom(voiceChannel: VoiceBasedChannel): void {
     if (!this.getFrom(voiceChannel)) {
       throw new Error("Cannot remove an unexisting player.");
     }
@@ -69,19 +67,17 @@ export class PlayerLibrary {
     delete this.players[key];
   }
 
-  private getKeyFrom(voiceChannel: VoiceChannel | VoiceBasedChannel): string {
+  private getKeyFrom(voiceChannel: VoiceBasedChannel): string {
     return `${voiceChannel.guildId}-${voiceChannel.id}`;
   }
 
-  private refreshExitTimer(voiceChannel: VoiceChannel | VoiceBasedChannel) {
+  private refreshExitTimer(voiceChannel: VoiceBasedChannel) {
     clearTimeout(this.players[this.getKeyFrom(voiceChannel)].timeout);
     this.players[this.getKeyFrom(voiceChannel)].timeout =
       this.generateTimeout(voiceChannel);
   }
 
-  private generateTimeout(
-    voiceChannel: VoiceChannel | VoiceBasedChannel
-  ): NodeJS.Timeout {
+  private generateTimeout(voiceChannel: VoiceBasedChannel): NodeJS.Timeout {
     return setTimeout(() => {
       const subscribedPlayer = this.players[this.getKeyFrom(voiceChannel)];
       if (
