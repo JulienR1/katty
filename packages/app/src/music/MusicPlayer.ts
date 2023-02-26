@@ -3,32 +3,30 @@ import {
   AudioPlayerState,
   AudioPlayerStatus,
   createAudioPlayer,
+  DiscordGatewayAdapterCreator,
   entersState,
   joinVoiceChannel,
   VoiceConnection,
   VoiceConnectionStatus,
 } from "@discordjs/voice";
-import { VoiceBasedChannel, VoiceChannel } from "discord.js";
-import { IMusicPlayer } from ".";
-import { ITrack, ITrackData } from "../Track";
-import config from "./../../config.json";
+import { VoiceBasedChannel } from "discord.js";
+import config from "../config.json";
+import { ITrack, ITrackData } from "./Track";
 
-export class MusicPlayer implements IMusicPlayer {
+export class MusicPlayer {
   private audioPlayer: AudioPlayer;
-  private voiceChannel: VoiceChannel;
+  private voiceChannel: VoiceBasedChannel;
   private voiceConnection: VoiceConnection | undefined = undefined;
 
   private playlist: ITrack[];
   private isLooping = false;
 
-  constructor(initialVoiceChannel: VoiceChannel) {
+  constructor(initialVoiceChannel: VoiceBasedChannel) {
     this.playlist = [];
     this.voiceChannel = initialVoiceChannel;
 
     this.audioPlayer = createAudioPlayer();
-    // this.audioPlayer.on("stateChange", (oldState, newState) =>
-    //   this.onPlayerStateChange(oldState, newState)
-    // );
+    this.audioPlayer.on<"stateChange">("stateChange", this.onPlayerStateChange);
   }
 
   private onPlayerStateChange(
@@ -59,7 +57,7 @@ export class MusicPlayer implements IMusicPlayer {
     this.audioPlayer.play(trackResource);
   }
 
-  public isVoiceConnected(voiceChannel: VoiceChannel): boolean {
+  public isVoiceConnected(voiceChannel: VoiceBasedChannel): boolean {
     if (voiceChannel?.id !== this.voiceConnection?.joinConfig.channelId) {
       return false;
     }
@@ -75,7 +73,7 @@ export class MusicPlayer implements IMusicPlayer {
     return this.isLooping;
   }
 
-  public async join(channel: VoiceBasedChannel): Promise<IMusicPlayer> {
+  public async join(channel: VoiceBasedChannel): Promise<MusicPlayer> {
     if (!channel) {
       throw new Error("No channel to connect to.");
     }
@@ -83,7 +81,8 @@ export class MusicPlayer implements IMusicPlayer {
     const connection = joinVoiceChannel({
       channelId: channel.id,
       guildId: channel.guild.id,
-      adapterCreator: channel.guild.voiceAdapterCreator as any, //createDiscordJSAdapter(channel),
+      adapterCreator: channel.guild
+        .voiceAdapterCreator as DiscordGatewayAdapterCreator,
     });
 
     try {
@@ -108,30 +107,30 @@ export class MusicPlayer implements IMusicPlayer {
     }
   }
 
-  public enqueue(tracks: ITrack[]): IMusicPlayer {
+  public enqueue(tracks: ITrack[]): MusicPlayer {
     this.playlist.push(...tracks);
     this.triggerTrack();
     return this;
   }
 
-  public togglePause(isPausing: boolean): IMusicPlayer {
+  public togglePause(isPausing: boolean): MusicPlayer {
     isPausing ? this.audioPlayer.pause() : this.audioPlayer.unpause();
     return this;
   }
 
-  public toggleLoop(): IMusicPlayer {
+  public toggleLoop(): MusicPlayer {
     this.isLooping = !this.isLooping;
     return this;
   }
 
-  public next(): IMusicPlayer {
+  public next(): MusicPlayer {
     if (this.audioPlayer.state.status === AudioPlayerStatus.Playing) {
       this.audioPlayer.stop();
     }
     return this;
   }
 
-  public shuffle(): IMusicPlayer {
+  public shuffle(): MusicPlayer {
     for (let i = 1; i < this.playlist.length - 1; i++) {
       const j = Math.floor(Math.random() * (this.playlist.length - i) + i);
       const tempTrack = this.playlist[i];
@@ -141,12 +140,12 @@ export class MusicPlayer implements IMusicPlayer {
     return this;
   }
 
-  public clear(): IMusicPlayer {
+  public clear(): MusicPlayer {
     this.playlist.length = 1;
     return this;
   }
 
-  public move(trackIndex: number, targetIndex: number): IMusicPlayer {
+  public move(trackIndex: number, targetIndex: number): MusicPlayer {
     if (
       this.playlist &&
       this.playlist.length > trackIndex &&
@@ -164,7 +163,7 @@ export class MusicPlayer implements IMusicPlayer {
     return this;
   }
 
-  public remove(trackIndex: number): IMusicPlayer {
+  public remove(trackIndex: number): MusicPlayer {
     if (this.playlist && trackIndex > 0 && trackIndex < this.playlist.length) {
       this.playlist.splice(trackIndex, 1);
     } else {
@@ -173,7 +172,7 @@ export class MusicPlayer implements IMusicPlayer {
     return this;
   }
 
-  public seek(timestamp: string): IMusicPlayer {
+  public seek(timestamp: string): MusicPlayer {
     // TODO
     return this;
   }

@@ -1,16 +1,15 @@
-import { VoiceChannel } from "discord.js";
-import { IMusicPlayer, MusicPlayer } from "../MusicPlayer";
-import config from "./../../config.json";
-import { IPlayerLibrary } from "./IPlayerLibrary";
+import { VoiceBasedChannel, VoiceChannel } from "discord.js";
+import config from "../config.json";
+import { MusicPlayer } from "./MusicPlayer";
 
 interface IRegisteredPlayer {
-  player: IMusicPlayer;
+  player: MusicPlayer;
   timeout: NodeJS.Timeout;
   onLeave: () => void;
 }
 
-export class PlayerLibrary implements IPlayerLibrary {
-  private static instance: IPlayerLibrary | undefined = undefined;
+export class PlayerLibrary {
+  private static instance: PlayerLibrary | undefined = undefined;
 
   private players: { [key: string]: IRegisteredPlayer };
 
@@ -28,7 +27,7 @@ export class PlayerLibrary implements IPlayerLibrary {
   public addTo(
     voiceChannel: VoiceChannel,
     onLeave: () => void
-  ): Promise<IMusicPlayer> {
+  ): Promise<MusicPlayer> {
     if (this.getFrom(voiceChannel)?.isVoiceConnected(voiceChannel)) {
       throw new Error("The provided channel already has a music player.");
     }
@@ -46,7 +45,9 @@ export class PlayerLibrary implements IPlayerLibrary {
     return player.join(voiceChannel);
   }
 
-  public getFrom(voiceChannel: VoiceChannel): IMusicPlayer | undefined {
+  public getFrom(
+    voiceChannel: VoiceChannel | VoiceBasedChannel
+  ): MusicPlayer | undefined {
     const registeredPlayer = this.players[this.getKeyFrom(voiceChannel)];
     if (registeredPlayer) {
       this.refreshExitTimer(voiceChannel);
@@ -55,7 +56,7 @@ export class PlayerLibrary implements IPlayerLibrary {
     return undefined;
   }
 
-  public removeFrom(voiceChannel: VoiceChannel): void {
+  public removeFrom(voiceChannel: VoiceChannel | VoiceBasedChannel): void {
     if (!this.getFrom(voiceChannel)) {
       throw new Error("Cannot remove an unexisting player.");
     }
@@ -68,17 +69,19 @@ export class PlayerLibrary implements IPlayerLibrary {
     delete this.players[key];
   }
 
-  private getKeyFrom(voiceChannel: VoiceChannel): string {
+  private getKeyFrom(voiceChannel: VoiceChannel | VoiceBasedChannel): string {
     return `${voiceChannel.guildId}-${voiceChannel.id}`;
   }
 
-  private refreshExitTimer(voiceChannel: VoiceChannel) {
+  private refreshExitTimer(voiceChannel: VoiceChannel | VoiceBasedChannel) {
     clearTimeout(this.players[this.getKeyFrom(voiceChannel)].timeout);
     this.players[this.getKeyFrom(voiceChannel)].timeout =
       this.generateTimeout(voiceChannel);
   }
 
-  private generateTimeout(voiceChannel: VoiceChannel): NodeJS.Timeout {
+  private generateTimeout(
+    voiceChannel: VoiceChannel | VoiceBasedChannel
+  ): NodeJS.Timeout {
     return setTimeout(() => {
       const subscribedPlayer = this.players[this.getKeyFrom(voiceChannel)];
       if (
