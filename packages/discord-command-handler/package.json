@@ -1,12 +1,13 @@
 {
   "name": "discord-command-handler",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
     "dev": "npm run build -- --watch",
-    "build": "rimraf dist && tsup src/index.ts --format cjs,esm --dts"
+    "prebuild": "rimraf dist",
+    "build": "tsup src/index.ts --format cjs,esm --dts"
   },
   "dependencies": {
     "@discordjs/builders": "^1.4.0",

@@ -1,7 +1,7 @@
-import { RepliableInteraction, VoiceBasedChannel } from "discord.js";
+import { ChatInputCommandInteraction, VoiceBasedChannel } from "discord.js";
 
 export type HandleCommandParams = {
-  interaction: RepliableInteraction;
+  interaction: ChatInputCommandInteraction;
   voiceChannel: VoiceBasedChannel | null;
 };
 

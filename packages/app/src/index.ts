@@ -35,14 +35,20 @@ client.on("ready", async (e) => {
 });
 
 client.on("interactionCreate", async (interaction) => {
-  if (interaction.isCommand() && interaction.isRepliable()) {
+  const handle = getCommandHandler(interaction);
+
+  if (handle) {
     const voiceChannel =
       interaction.member instanceof GuildMember
         ? interaction.member.voice.channel
         : null;
 
-    const handle = getCommandHandler(interaction.commandName);
-    handle({ interaction, voiceChannel });
+    handle({ voiceChannel });
+  } else {
+    console.log(
+      "Could not find a command associated with this interaction.",
+      interaction.toString()
+    );
   }
 });
 
