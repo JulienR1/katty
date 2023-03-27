@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { ApplicationCommandType, Interaction } from "discord.js";
+import { Interaction } from "discord.js";
 import { HandleCommandParams, IDiscordCommand } from "./types";
 
 type SlashCommandBuilderBase = { toJSON: SlashCommandBuilder["toJSON"] };
@@ -11,7 +11,6 @@ type DiscordCommandOptions<S extends string> = {
   extra?: (builder: SlashCommandBuilder) => SlashCommandBuilderBase;
 };
 
-type IDiscordCommandHandler = IDiscordCommand["handle"];
 type IDiscordCommandConstructor = new () => IDiscordCommand;
 
 const rawCommands = new Set<{
@@ -19,7 +18,7 @@ const rawCommands = new Set<{
   options: DiscordCommandOptions<string>;
 }>();
 
-const registeredCommands: Record<string, IDiscordCommandHandler> = {};
+const registeredCommands: Record<string, IDiscordCommand> = {};
 
 export function DiscordCommand<S extends string>(
   options: DiscordCommandOptions<S>
@@ -34,7 +33,7 @@ export const getSlashCommands = () => {
 
   for (const { constructor, options } of rawCommands) {
     const command = new constructor();
-    registeredCommands[options.name] = command.handle;
+    registeredCommands[options.name] = command;
 
     const commandBuilder = new SlashCommandBuilder()
       .setName(options.name)
@@ -46,13 +45,18 @@ export const getSlashCommands = () => {
 };
 
 export const getCommandHandler = (interaction: Interaction) => {
-  if (
-    interaction.isRepliable() &&
-    interaction.isCommand() &&
-    interaction.commandType === ApplicationCommandType.ChatInput
-  ) {
+  if (interaction.isRepliable() && interaction.isChatInputCommand()) {
     return (args: Omit<HandleCommandParams, "interaction">) =>
-      registeredCommands[interaction.commandName]({ ...args, interaction });
+      registeredCommands[interaction.commandName].handle({
+        ...args,
+        interaction,
+      });
   }
+
+  if (interaction.isAutocomplete()) {
+    return () =>
+      registeredCommands[interaction.commandName].autocomplete?.(interaction);
+  }
+
   return undefined;
 };

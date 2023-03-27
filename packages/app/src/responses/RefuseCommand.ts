@@ -1,9 +1,9 @@
-import { RepliableInteraction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 
 type Reason = "bot-not-connected";
 
 export const refuse = (
-  interaction: RepliableInteraction,
+  interaction: ChatInputCommandInteraction,
   reason: Reason
 ): Promise<unknown> => {
   switch (reason) {

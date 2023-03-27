@@ -1,4 +1,8 @@
-import { ChatInputCommandInteraction, VoiceBasedChannel } from "discord.js";
+import {
+  AutocompleteInteraction,
+  ChatInputCommandInteraction,
+  VoiceBasedChannel,
+} from "discord.js";
 
 export type HandleCommandParams = {
   interaction: ChatInputCommandInteraction;
@@ -7,4 +11,5 @@ export type HandleCommandParams = {
 
 export interface IDiscordCommand {
   handle(params: HandleCommandParams): void;
+  autocomplete?(interaction: AutocompleteInteraction): void;
 }
