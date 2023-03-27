@@ -39,4 +39,8 @@ export class Track {
     const audio = await play.stream(this.info.url);
     return createAudioResource(audio.stream, { inputType: audio.type });
   }
+
+  public clone(): Track {
+    return new Track({ ...this.info });
+  }
 }
