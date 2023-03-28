@@ -4,5 +4,6 @@ import "./LoopCommand";
 import "./PauseCommand";
 import "./PlayCommand";
 import "./PlaylistCommand";
+import "./QueueCommand";
 import "./ReloadCommand";
 import "./SkipCommand";
