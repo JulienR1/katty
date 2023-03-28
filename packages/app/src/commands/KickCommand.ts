@@ -1,5 +1,5 @@
 import { DiscordCommand, HandleCommandParams } from "discord-command-handler";
-import { PlayerLibrary } from "../music/PlayerLibrary";
+import { MusicPlayer } from "../music/MusicPlayer";
 import { acknowledge, refuse } from "../responses";
 
 @DiscordCommand({ name: "kick", description: "Kick Katty" })
@@ -10,6 +10,6 @@ export class KickCommand {
     }
 
     await acknowledge(interaction);
-    await PlayerLibrary.Instance().removeFrom(voiceChannel);
+    MusicPlayer.fromGuild(voiceChannel.guildId).leave();
   }
 }

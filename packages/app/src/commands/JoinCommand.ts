@@ -1,5 +1,5 @@
 import { DiscordCommand, HandleCommandParams } from "discord-command-handler";
-import { PlayerLibrary } from "../music/PlayerLibrary";
+import { MusicPlayer } from "../music/MusicPlayer";
 import { acknowledge, refuse } from "../responses";
 
 @DiscordCommand({ name: "join", description: "Summon Katty" })
@@ -10,8 +10,6 @@ export class JoinCommand {
     }
 
     await acknowledge(interaction);
-    await PlayerLibrary.Instance().addTo(voiceChannel, () =>
-      console.log("TODO: on quit notification")
-    );
+    await MusicPlayer.fromGuild(voiceChannel.guildId).join(voiceChannel);
   }
 }

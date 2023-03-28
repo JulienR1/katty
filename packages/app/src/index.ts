@@ -7,6 +7,7 @@ import {
 } from "discord-command-handler";
 import { Client, GuildMember } from "discord.js";
 import { env, i18n } from "./configuration";
+import { MusicPlayer } from "./music/MusicPlayer";
 
 env.setup();
 i18n.setup();
@@ -49,6 +50,18 @@ client.on("interactionCreate", async (interaction) => {
       "Could not find a command associated with this interaction.",
       interaction.toString()
     );
+  }
+});
+
+client.on("voiceStateUpdate", async (oldState) => {
+  if (oldState.channelId) {
+    const channel = await client.channels.fetch(oldState.channelId);
+    if (channel?.isVoiceBased()) {
+      const members = channel.members.filter((member) => !member.user.bot);
+      if (members.size === 0) {
+        MusicPlayer.fromGuild(oldState.guild.id).leave();
+      }
+    }
   }
 });
 

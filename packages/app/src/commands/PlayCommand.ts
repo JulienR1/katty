@@ -1,14 +1,7 @@
-import {
-  createAudioPlayer,
-  createAudioResource,
-  entersState,
-  joinVoiceChannel,
-  NoSubscriberBehavior,
-  VoiceConnectionStatus,
-} from "@discordjs/voice";
 import { DiscordCommand, HandleCommandParams } from "discord-command-handler";
 import { AutocompleteInteraction } from "discord.js";
 import play from "play-dl";
+import { MusicPlayer } from "../music/MusicPlayer";
 import { Track } from "../music/Track";
 import { isPlaylist, isUrl } from "../music/utils";
 import { acknowledge, refuse } from "../responses";
@@ -80,82 +73,10 @@ export class PlayCommand {
       await editReply.edit(`Adding ${tracks.length} songs to the playlist.`);
     }
 
-    // const trackPromises = Object.values(factories).map((factory) =>
-    //   factory.prototype.from(searchKeys)
-    // );
-    // const tracks = await Promise.any(trackPromises);
-
-    // const playerLibrary = PlayerLibrary.Instance();
-    // (
-    //   playerLibrary.getFrom(voiceChannel) ||
-    //   (await playerLibrary.addTo(voiceChannel, () => console.log("bye")))
-    // ).enqueue(tracks);
-
-    // const track = tracks.shift();
-    // console.log("chose track: ", track);
-
-    // await Track.make(searchKeys);
-
-    // const tracks = await play.search(query);
-    // const track = tracks.shift();
-
-    // if (!track) {
-    //   await editReply.edit("no track lol");
-    //   return;
-    // }
-
-    const audioPlayer = createAudioPlayer({
-      behaviors: { noSubscriber: NoSubscriberBehavior.Play },
-    });
-    // audioPlayer.on<"stateChange">("stateChange", (oldState, newState) => {
-    //   console.log("Changed state: ", oldState, newState);
-    // });
-
-    const connection = joinVoiceChannel({
-      channelId: voiceChannel.id,
-      guildId: voiceChannel.guild.id,
-      adapterCreator: voiceChannel.guild.voiceAdapterCreator as any,
-    });
-    await entersState(connection, VoiceConnectionStatus.Ready, 10000);
-    connection.on("error", (err) => console.log(err));
-    connection.on("debug", (msg) => console.log(msg));
-
-    const networkChangeStateHandler = (_: any, newState: any) => {
-      const newUdp = Reflect.get(newState, "udp");
-      clearInterval(newUdp?.keepAliveInterval);
-    };
-
-    connection.on<"stateChange">("stateChange", (oldState, newState) => {
-      const oldNetworking = Reflect.get(oldState, "networking");
-      const newNetworking = Reflect.get(newState, "networking");
-
-      oldNetworking?.off("stateChange", networkChangeStateHandler);
-      newNetworking?.on("stateChange", networkChangeStateHandler);
-      if (
-        oldState.status === VoiceConnectionStatus.Ready &&
-        newState.status === VoiceConnectionStatus.Connecting
-      ) {
-        connection.configureNetworking();
-      }
-    });
-
-    // const audio = await track.getAudioResource();
-    // const info = await play.video_info(track.getData().url);
-    // console.log(info);
-    // const audio = await play.stream(track.getData().url);
-    const audio = await play.stream(tracks[0].info.url);
-    const resource = createAudioResource(audio.stream, {
-      inputType: audio.type,
-    });
-    audio.stream.on("error", (err) => console.log(err));
-    audio.stream.on("finish", () => console.log("finish"));
-    audio.stream.on("end", () => console.log("end"));
-    audio.stream.on("close", () => console.log("close"));
-
-    audioPlayer.play(resource);
-    connection.subscribe(audioPlayer);
-
-    audioPlayer.on("error", (err) => console.log(err));
+    const musicPlayer = MusicPlayer.fromGuild(voiceChannel.guildId);
+    musicPlayer.playlist.add(...tracks);
+    await musicPlayer.join(voiceChannel);
+    await musicPlayer.playTrack();
 
     await editReply.edit("started playing: " + tracks[0].info.title);
   }

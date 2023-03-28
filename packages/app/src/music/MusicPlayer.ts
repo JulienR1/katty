@@ -1,184 +1,144 @@
 import {
   AudioPlayer,
-  AudioPlayerState,
   AudioPlayerStatus,
   createAudioPlayer,
   DiscordGatewayAdapterCreator,
   entersState,
+  getVoiceConnection,
   joinVoiceChannel,
   VoiceConnection,
   VoiceConnectionStatus,
 } from "@discordjs/voice";
-import { VoiceBasedChannel } from "discord.js";
-import config from "../config.json";
-import { ITrack, ITrackData } from "./Track";
+import { BaseGuild, VoiceBasedChannel } from "discord.js";
+import { err, ok, Result } from "../types/Result";
+import { Playlist } from "./Playlist";
 
+type GuildId = BaseGuild["id"];
+
+const musicPlayerRegistry: Record<GuildId, MusicPlayer> = {};
 export class MusicPlayer {
+  public playlist: Playlist;
+
   private audioPlayer: AudioPlayer;
-  private voiceChannel: VoiceBasedChannel;
-  private voiceConnection: VoiceConnection | undefined = undefined;
+  private guildId: GuildId;
+  private looping: boolean;
 
-  private playlist: ITrack[];
-  private isLooping = false;
+  private inactivityTimeout: NodeJS.Timeout | null = null;
 
-  constructor(initialVoiceChannel: VoiceBasedChannel) {
-    this.playlist = [];
-    this.voiceChannel = initialVoiceChannel;
-
+  private constructor(guildId: GuildId) {
     this.audioPlayer = createAudioPlayer();
-    this.audioPlayer.on<"stateChange">("stateChange", this.onPlayerStateChange);
-  }
+    this.playlist = new Playlist();
+    this.guildId = guildId;
+    this.looping = false;
 
-  private onPlayerStateChange(
-    oldState: AudioPlayerState,
-    newState: AudioPlayerState
-  ) {
-    if (
-      newState.status === AudioPlayerStatus.Idle &&
-      oldState.status !== AudioPlayerStatus.Idle
-    ) {
-      if (!this.isLooping) {
-        this.playlist.shift();
+    this.audioPlayer.on<"stateChange">(
+      "stateChange",
+      async ({ status: oldStatus }, { status: newStatus }) => {
+        if (
+          oldStatus !== AudioPlayerStatus.Idle &&
+          newStatus === AudioPlayerStatus.Idle
+        ) {
+          this.selectNextTrack();
+          const foundTrack = await this.playTrack();
+          this.inactivityTimeout = setTimeout(this.leave, 5 * 60 * 1000);
+        }
+
+        if (newStatus !== AudioPlayerStatus.Idle) {
+          if (this.inactivityTimeout) {
+            clearTimeout(this.inactivityTimeout);
+          }
+          this.inactivityTimeout = null;
+        }
       }
-      this.triggerTrack();
-    }
+    );
   }
 
-  private async triggerTrack() {
-    if (this.audioPlayer.state.status !== AudioPlayerStatus.Idle) {
-      return;
+  public static fromGuild(guildId: GuildId) {
+    if (musicPlayerRegistry[guildId]) {
+      return musicPlayerRegistry[guildId];
     }
 
-    if (this.playlist.length === 0) {
-      return;
-    }
-
-    const trackResource = await this.playlist[0].getAudioResource();
-    this.audioPlayer.play(trackResource);
+    const musicPlayer = new MusicPlayer(guildId);
+    musicPlayerRegistry[guildId] = musicPlayer;
+    return musicPlayer;
   }
 
-  public isVoiceConnected(voiceChannel: VoiceBasedChannel): boolean {
-    if (voiceChannel?.id !== this.voiceConnection?.joinConfig.channelId) {
-      return false;
-    }
-
-    const disconnectedStatuses = [
-      VoiceConnectionStatus.Disconnected,
-      VoiceConnectionStatus.Destroyed,
-    ];
-    return !disconnectedStatuses.includes(this.voiceConnection.state.status);
-  }
-
-  public getIsLooping(): boolean {
-    return this.isLooping;
-  }
-
-  public async join(channel: VoiceBasedChannel): Promise<MusicPlayer> {
-    if (!channel) {
-      throw new Error("No channel to connect to.");
-    }
-
+  public async join(
+    channel: VoiceBasedChannel
+  ): Promise<Result<VoiceConnection>> {
     const connection = joinVoiceChannel({
+      guildId: this.guildId,
       channelId: channel.id,
-      guildId: channel.guild.id,
       adapterCreator: channel.guild
         .voiceAdapterCreator as DiscordGatewayAdapterCreator,
     });
 
+    const networkChangeStateHandler = (_: any, newState: any) => {
+      const newUdp = Reflect.get(newState, "udp");
+      clearInterval(newUdp?.keepAliveInterval);
+    };
+
+    connection.on<"stateChange">("stateChange", (oldState, newState) => {
+      const oldNetworking = Reflect.get(oldState, "networking");
+      const newNetworking = Reflect.get(newState, "networking");
+
+      oldNetworking?.off("stateChange", networkChangeStateHandler);
+      newNetworking?.on("stateChange", networkChangeStateHandler);
+      if (
+        oldState.status === VoiceConnectionStatus.Ready &&
+        newState.status === VoiceConnectionStatus.Connecting
+      ) {
+        connection.configureNetworking();
+      }
+    });
+
     try {
-      await entersState(
-        connection,
-        VoiceConnectionStatus.Ready,
-        config.voiceCommunication.maxLoadTime
-      );
+      await entersState(connection, VoiceConnectionStatus.Ready, 10000);
       connection.subscribe(this.audioPlayer);
-      this.voiceConnection = connection;
-    } catch (err) {
+      return ok(connection);
+    } catch (e) {
       connection.destroy();
-      throw err;
-    }
-
-    return this;
-  }
-
-  public leave(): void {
-    if (this.voiceConnection?.joinConfig.channelId === this.voiceChannel.id) {
-      this.voiceConnection?.disconnect();
+      return err(typeof e === "string" ? e : "Unknown error");
     }
   }
 
-  public enqueue(tracks: ITrack[]): MusicPlayer {
-    this.playlist.push(...tracks);
-    this.triggerTrack();
-    return this;
-  }
+  public async playTrack() {
+    const track = this.playlist.at(0);
 
-  public togglePause(isPausing: boolean): MusicPlayer {
-    isPausing ? this.audioPlayer.pause() : this.audioPlayer.unpause();
-    return this;
-  }
-
-  public toggleLoop(): MusicPlayer {
-    this.isLooping = !this.isLooping;
-    return this;
-  }
-
-  public next(): MusicPlayer {
-    if (this.audioPlayer.state.status === AudioPlayerStatus.Playing) {
-      this.audioPlayer.stop();
+    if (track.isOk()) {
+      const audio = await track.value.getAudioResource();
+      this.audioPlayer.play(audio);
     }
-    return this;
   }
 
-  public shuffle(): MusicPlayer {
-    for (let i = 1; i < this.playlist.length - 1; i++) {
-      const j = Math.floor(Math.random() * (this.playlist.length - i) + i);
-      const tempTrack = this.playlist[i];
-      this.playlist[i] = this.playlist[j];
-      this.playlist[j] = tempTrack;
+  public selectNextTrack() {
+    if (!this.looping) {
+      this.playlist.remove(0);
     }
-    return this;
   }
 
-  public clear(): MusicPlayer {
-    this.playlist.length = 1;
-    return this;
-  }
-
-  public move(trackIndex: number, targetIndex: number): MusicPlayer {
-    if (
-      this.playlist &&
-      this.playlist.length > trackIndex &&
-      this.playlist.length > targetIndex &&
-      trackIndex > 0 &&
-      targetIndex > 0 &&
-      targetIndex !== trackIndex
-    ) {
-      const targetTrack = this.playlist[targetIndex];
-      this.playlist[targetIndex] = this.playlist[trackIndex];
-      this.playlist[trackIndex] = targetTrack;
-    } else {
-      throw new Error("Invalid parameters in move.");
-    }
-    return this;
-  }
-
-  public remove(trackIndex: number): MusicPlayer {
-    if (this.playlist && trackIndex > 0 && trackIndex < this.playlist.length) {
-      this.playlist.splice(trackIndex, 1);
-    } else {
-      throw new Error("Invalid parameters in remove.");
-    }
-    return this;
-  }
-
-  public seek(timestamp: string): MusicPlayer {
+  public seek(timestamp: number) {
     // TODO
-    return this;
   }
 
-  public getQueue(): ITrackData[] {
-    const playlistData = this.playlist.map((track) => track.getData());
-    return JSON.parse(JSON.stringify(playlistData));
+  public togglePause(): boolean {
+    if (this.audioPlayer.state.status === AudioPlayerStatus.Paused) {
+      this.audioPlayer.unpause();
+      return false;
+    } else {
+      this.audioPlayer.pause();
+      return true;
+    }
+  }
+
+  public toggleLoop(looping = this.looping): boolean {
+    this.looping = !looping;
+    return this.looping;
+  }
+
+  public leave() {
+    this.audioPlayer.stop();
+    getVoiceConnection(this.guildId)?.destroy();
+    delete musicPlayerRegistry[this.guildId];
   }
 }
