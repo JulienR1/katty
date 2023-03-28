@@ -1,8 +1,8 @@
 import "./JoinCommand";
 import "./KickCommand";
 import "./LoopCommand";
-import "./MoveCommand";
 import "./PauseCommand";
 import "./PlayCommand";
+import "./PlaylistCommand";
 import "./ReloadCommand";
 import "./SkipCommand";

@@ -2,7 +2,10 @@ import { DiscordCommand, HandleCommandParams } from "discord-command-handler";
 import { MusicPlayer } from "../music/MusicPlayer";
 import { acknowledge, refuse } from "../responses";
 
-@DiscordCommand({ name: "skip", description: "Skip to the next song" })
+@DiscordCommand({
+  name: "skip",
+  description: "Skip to the next song",
+})
 export class SkipCommand {
   public async handle({ interaction, voiceChannel }: HandleCommandParams) {
     if (!voiceChannel) {

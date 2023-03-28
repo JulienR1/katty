@@ -77,4 +77,18 @@ describe("Playlist", () => {
       expect(playlist.getAll().length).toBe(0);
     });
   });
+
+  describe("shuffle", () => {
+    it("should not affect the first track of the playlist", () => {
+      for (let i = 0; i < 10; i++) {
+        playlist.shuffle();
+
+        const track = playlist.at(0);
+        expect(track.isOk()).toBeTruthy();
+        if (track.isOk()) {
+          expect(track.value).toEqual(tracks[0]);
+        }
+      }
+    });
+  });
 });
