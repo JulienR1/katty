@@ -2,11 +2,10 @@ import "./commands";
 
 import { getCommandHandler, getSlashCommands } from "discord-command-handler";
 import { Client, GuildMember } from "discord.js";
-import { env, i18n } from "./configuration";
+import { setup } from "./configuration/env";
 import { MusicPlayer } from "./music/MusicPlayer";
 
-env.setup();
-i18n.setup();
+setup();
 
 const client = new Client({
   intents: ["Guilds", "GuildVoiceStates", "GuildMessages"],
