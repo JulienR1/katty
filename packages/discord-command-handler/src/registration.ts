@@ -1,33 +1,30 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v10";
-import { existsSync, readFileSync, writeFileSync } from "fs";
-import path from "path";
+import { Guild } from "discord.js";
 
-export const postSlashCommands = async (
+export const updateSlashCommands = async (
   commands: ReturnType<SlashCommandBuilder["toJSON"]>[],
-  guildIds: string[],
+  guildId: Guild["id"],
   applicationId: string,
   discordToken: string
 ) => {
-  const requiresUpdate = updateRegistry(
-    commands.map((command) => command.name)
-  );
-  if (!requiresUpdate) {
+  if (commands.length === 0) {
     console.log("No application (/) commands to update. Skipping.");
     return;
   }
 
   const rest = new REST({ version: "10" }).setToken(discordToken);
-  const promises = guildIds.map((guildId) => {
-    rest.put(Routes.applicationGuildCommands(applicationId, guildId), {
-      body: commands,
-    });
-  });
 
   try {
-    console.log(`Started refreshing ${commands.length} application commands.`);
-    const data = await Promise.all(promises);
+    console.log(
+      `Started refreshing ${commands.length} application (/) commands.`
+    );
+
+    const data = await rest.put(
+      Routes.applicationGuildCommands(applicationId, guildId),
+      { body: commands }
+    );
     console.log(
       `Successfully refreshed ${(data as any).length} application (/) commands.`
     );
@@ -35,20 +32,4 @@ export const postSlashCommands = async (
     console.log("Failed to update commands.");
     console.error(err);
   }
-};
-
-const updateRegistry = (commandNames: string[]) => {
-  const filepath = path.join(process.cwd(), "registry.json");
-  const registry: Array<string> = existsSync(filepath)
-    ? JSON.parse(readFileSync(filepath, "utf-8"))
-    : [];
-
-  writeFileSync(filepath, JSON.stringify(commandNames), "utf-8");
-
-  for (const commandName of commandNames) {
-    if (!registry.includes(commandName)) {
-      return true;
-    }
-  }
-  return false;
 };

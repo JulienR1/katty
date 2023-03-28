@@ -1,10 +1,6 @@
 import "./commands";
 
-import {
-  getCommandHandler,
-  getSlashCommands,
-  postSlashCommands,
-} from "discord-command-handler";
+import { getCommandHandler, getSlashCommands } from "discord-command-handler";
 import { Client, GuildMember } from "discord.js";
 import { env, i18n } from "./configuration";
 import { MusicPlayer } from "./music/MusicPlayer";
@@ -17,21 +13,7 @@ const client = new Client({
 });
 
 client.on("ready", async (e) => {
-  if (e.application.id === undefined) {
-    throw new Error("Could not find application id.");
-  }
-
-  const commands = getSlashCommands();
-  const guilds = await client.guilds.fetch();
-  const guildIds = guilds.map((guild) => guild.id);
-
-  await postSlashCommands(
-    commands,
-    guildIds,
-    e.application.id,
-    process.env.DISCORD_TOKEN
-  );
-
+  getSlashCommands();
   console.log(`Logged in as ${client?.user?.tag}`);
 });
 
