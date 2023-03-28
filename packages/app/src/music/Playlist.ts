@@ -47,7 +47,7 @@ export class Playlist {
   }
 
   public at(index: number): Result<Track> {
-    const track = this.tracks[index].clone();
+    const track = this.tracks[index]?.clone();
     return track ? ok(track) : err("Track does not exist");
   }
 

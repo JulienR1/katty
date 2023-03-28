@@ -39,7 +39,7 @@ export class MusicPlayer {
           newStatus === AudioPlayerStatus.Idle
         ) {
           this.selectNextTrack();
-          const foundTrack = await this.playTrack();
+          await this.playTrack();
           this.inactivityTimeout = setTimeout(this.leave, 5 * 60 * 1000);
         }
 
@@ -102,12 +102,18 @@ export class MusicPlayer {
     }
   }
 
-  public async playTrack() {
+  public async playTrack(force = false) {
+    if (!force && this.audioPlayer.state.status !== AudioPlayerStatus.Idle) {
+      return;
+    }
+
     const track = this.playlist.at(0);
 
     if (track.isOk()) {
       const audio = await track.value.getAudioResource();
       this.audioPlayer.play(audio);
+    } else {
+      this.audioPlayer.stop();
     }
   }
 
@@ -131,8 +137,8 @@ export class MusicPlayer {
     }
   }
 
-  public toggleLoop(looping = this.looping): boolean {
-    this.looping = !looping;
+  public toggleLoop(looping?: boolean): boolean {
+    this.looping = looping ?? !this.looping;
     return this.looping;
   }
 
