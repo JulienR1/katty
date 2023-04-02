@@ -9,7 +9,6 @@ import { respond } from "../embeds/utils/responses";
 import { MusicPlayer } from "../music/MusicPlayer";
 import { TrackFactory } from "../music/TrackFactory";
 import { isPlaylist, isUrl } from "../music/utils";
-import { refuse } from "../responses";
 
 @DiscordCommand({
   name: "play",
@@ -60,10 +59,6 @@ export class PlayCommand {
   }
 
   public async handle({ interaction, voiceChannel }: HandleCommandParams) {
-    if (!voiceChannel) {
-      return await refuse(interaction, "bot-not-connected");
-    }
-
     const query = interaction.options.getString("query", true);
     const loadingStr = isUrl(query)
       ? "Fetching track from url"

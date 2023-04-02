@@ -1,6 +1,6 @@
 import { DiscordCommand, HandleCommandParams } from "discord-command-handler";
 import { MusicPlayer } from "../music/MusicPlayer";
-import { acknowledge, refuse } from "../responses";
+import { acknowledge } from "../responses";
 
 @DiscordCommand({
   name: "queue",
@@ -12,10 +12,6 @@ import { acknowledge, refuse } from "../responses";
 })
 export class QueueCommand {
   public async handle({ interaction, voiceChannel }: HandleCommandParams) {
-    if (!voiceChannel) {
-      return await refuse(interaction, "bot-not-connected");
-    }
-
     const reply = await acknowledge(interaction);
     const tracks = MusicPlayer.fromGuild(
       voiceChannel.guildId

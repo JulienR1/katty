@@ -6,7 +6,7 @@ import {
 
 export type HandleCommandParams = {
   interaction: ChatInputCommandInteraction;
-  voiceChannel: VoiceBasedChannel | null;
+  voiceChannel: VoiceBasedChannel;
 };
 
 export interface IDiscordCommand {

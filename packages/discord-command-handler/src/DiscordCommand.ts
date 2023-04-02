@@ -53,10 +53,13 @@ export const getCommandHandler = (interaction: Interaction) => {
       });
   }
 
+  return undefined;
+};
+
+export const getAutocomplete = (interaction: Interaction) => {
   if (interaction.isAutocomplete()) {
     return () =>
       registeredCommands[interaction.commandName].autocomplete?.(interaction);
   }
-
   return undefined;
 };

@@ -1,6 +1,6 @@
 import { DiscordCommand, HandleCommandParams } from "discord-command-handler";
 import { MusicPlayer } from "../music/MusicPlayer";
-import { acknowledge, refuse } from "../responses";
+import { acknowledge } from "../responses";
 
 @DiscordCommand({
   name: "loop",
@@ -8,10 +8,6 @@ import { acknowledge, refuse } from "../responses";
 })
 export class LoopCommand {
   public async handle({ interaction, voiceChannel }: HandleCommandParams) {
-    if (!voiceChannel) {
-      return await refuse(interaction, "bot-not-connected");
-    }
-
     await acknowledge(interaction);
     await MusicPlayer.fromGuild(voiceChannel.guildId).toggleLoop();
   }

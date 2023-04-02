@@ -98,10 +98,6 @@ export class PlaylistCommand {
   }
 
   public async handle({ interaction, voiceChannel }: HandleCommandParams) {
-    if (!voiceChannel) {
-      return await refuse(interaction, "bot-not-connected");
-    }
-
     const musicPlayer = MusicPlayer.fromGuild(voiceChannel.guildId);
 
     switch (interaction.options.getSubcommand(true)) {

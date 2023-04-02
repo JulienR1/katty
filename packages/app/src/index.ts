@@ -1,8 +1,13 @@
 import "./commands";
 
-import { getCommandHandler, getSlashCommands } from "discord-command-handler";
-import { Client, GuildMember } from "discord.js";
+import {
+  getAutocomplete,
+  getCommandHandler,
+  getSlashCommands,
+} from "discord-command-handler";
+import { ChatInputCommandInteraction, Client, GuildMember } from "discord.js";
 import { setup } from "./configuration/env";
+import { respond } from "./embeds/utils/responses";
 import { MusicPlayer } from "./music/MusicPlayer";
 
 setup();
@@ -18,14 +23,24 @@ client.on("ready", async (e) => {
 
 client.on("interactionCreate", async (interaction) => {
   const handle = getCommandHandler(interaction);
+  const autocomplete = getAutocomplete(interaction);
 
-  if (handle) {
+  if (autocomplete) {
+    autocomplete();
+  } else if (handle) {
     const voiceChannel =
       interaction.member instanceof GuildMember
         ? interaction.member.voice.channel
         : null;
 
-    handle({ voiceChannel });
+    if (voiceChannel) {
+      handle({ voiceChannel });
+    } else {
+      await respond(interaction as ChatInputCommandInteraction).refuse(
+        "You must be connected to a voice channel.",
+        { hide: true }
+      );
+    }
   } else {
     console.log(
       "Could not find a command associated with this interaction.",
