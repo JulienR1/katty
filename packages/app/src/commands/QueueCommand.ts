@@ -1,6 +1,8 @@
 import { DiscordCommand, HandleCommandParams } from "discord-command-handler";
+import { SuccessEmbed } from "../embeds/SuccessEmbed";
+import { formatDescription } from "../embeds/utils/formatters";
+import { respond } from "../embeds/utils/responses";
 import { MusicPlayer } from "../music/MusicPlayer";
-import { acknowledge } from "../responses";
 
 @DiscordCommand({
   name: "queue",
@@ -12,7 +14,7 @@ import { acknowledge } from "../responses";
 })
 export class QueueCommand {
   public async handle({ interaction, voiceChannel }: HandleCommandParams) {
-    const reply = await acknowledge(interaction);
+    const response = await respond(interaction).acknowledge("Coming up!");
     const tracks = MusicPlayer.fromGuild(
       voiceChannel.guildId
     ).playlist.getAll();
@@ -28,8 +30,15 @@ export class QueueCommand {
     const endIndex = Math.min(page * pageSize, tracks.length);
     const tracksToRender = tracks.slice(startIndex, endIndex);
 
-    await reply.edit(
-      tracksToRender.map((track) => track.info.title).join(", ")
+    await response.edit(
+      new SuccessEmbed()
+        .setTitle("Queue")
+        .setDescription(
+          formatDescription(
+            tracksToRender.map((track) => `- ${track.info.title}\n`).join(", ")
+          )
+        )
+        .setFooter({ text: "lol jvais le mettre clean un jour" })
     );
   }
 }

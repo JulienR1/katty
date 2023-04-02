@@ -1,6 +1,7 @@
 const EMBED_TITLE_MAX_LENGTH = 256;
 const EMBED_FOOTER_MAX_LENGTH = 2048;
 const EMBED_FIELD_MAX_LENGTH = 1024;
+const EMBED_DESCRIPTION_LENGTH = 4096;
 
 const trimStringToLength = (str: string, maxLength: number) => {
   const parsedStr = str.substring(0, maxLength - 3);
@@ -31,6 +32,11 @@ export const formatOrdinalNumber = (num: number) => {
 export const formatTitle = (title: string, extraCharCount = 0) => {
   const maxTitleLength = EMBED_TITLE_MAX_LENGTH - extraCharCount;
   return trimStringToLength(title, maxTitleLength);
+};
+
+export const formatDescription = (description: string, extraCharCount = 0) => {
+  const maxDescriptionLength = EMBED_DESCRIPTION_LENGTH - extraCharCount;
+  return trimStringToLength(description, maxDescriptionLength);
 };
 
 export const formatField = (field: string, extraCharCount = 0) => {
