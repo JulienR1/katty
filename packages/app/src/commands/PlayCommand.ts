@@ -1,10 +1,15 @@
 import { DiscordCommand, HandleCommandParams } from "discord-command-handler";
 import { AutocompleteInteraction } from "discord.js";
 import play from "play-dl";
+import { ErrorEmbed } from "../embeds/ErrorEmbed";
+import { PlaylistInfoEmbed } from "../embeds/PlaylistInfoEmbed";
+import { TrackInfoEmbed } from "../embeds/TrackInfoEmbed";
+import { formatField, formatTitle } from "../embeds/utils/formatters";
+import { respond } from "../embeds/utils/responses";
 import { MusicPlayer } from "../music/MusicPlayer";
-import { Track } from "../music/Track";
+import { TrackFactory } from "../music/TrackFactory";
 import { isPlaylist, isUrl } from "../music/utils";
-import { acknowledge, refuse } from "../responses";
+import { refuse } from "../responses";
 
 @DiscordCommand({
   name: "play",
@@ -59,34 +64,37 @@ export class PlayCommand {
       return await refuse(interaction, "bot-not-connected");
     }
 
-    const editReply = await acknowledge(interaction);
-
     const query = interaction.options.getString("query", true);
-    const url = await this.getUrlFromQuery(query);
-    const tracks = await Track.make(url);
+    const loadingStr = isUrl(query)
+      ? "Fetching track from url"
+      : `Fetching "**${formatTitle(query, 15)}**"`;
+    const response = await respond(interaction).acknowledge(loadingStr);
 
-    if (tracks.length === 0) {
-      return await editReply.edit("Could not find any songs. Aborting.");
-    } else if (tracks.length === 1) {
-      await editReply.edit(`Adding ${tracks[0].info.title} to the playlist.`);
-    } else {
-      await editReply.edit(`Adding ${tracks.length} songs to the playlist.`);
+    const result = await TrackFactory.fromQuery(query);
+    if (result.type === "no-track") {
+      return await response.edit(this.makeErrorEmbed(query));
     }
 
     const musicPlayer = MusicPlayer.fromGuild(voiceChannel.guildId);
-    musicPlayer.playlist.add(...tracks);
-    await musicPlayer.join(voiceChannel);
-    await musicPlayer.playTrack();
 
-    await editReply.edit("started playing: " + tracks[0].info.title);
-  }
-
-  private async getUrlFromQuery(query: string) {
-    if (isUrl(query)) {
-      return query;
+    if (result.type === "single-track") {
+      musicPlayer.playlist.add(result.track);
+      await response.edit(
+        new TrackInfoEmbed(result.track.info, musicPlayer.playlist, query)
+      );
+    } else {
+      musicPlayer.playlist.add(...result.tracks);
+      await response.edit(new PlaylistInfoEmbed(result, musicPlayer.playlist));
     }
 
-    const videoUrls = await play.search(query);
-    return videoUrls[0].url;
+    await musicPlayer.join(voiceChannel);
+    await musicPlayer.playTrack();
+  }
+
+  private makeErrorEmbed(query: string) {
+    return new ErrorEmbed()
+      .setTitle("Could not find any tracks")
+      .setFields([{ name: "Query", value: formatField(query) }])
+      .setTimestamp();
   }
 }

@@ -113,7 +113,7 @@ export class MusicPlayer {
       const audio = await track.value.getAudioResource();
       this.audioPlayer.play(audio);
     } else {
-      this.audioPlayer.stop();
+      this.audioPlayer?.stop();
     }
   }
 
@@ -143,7 +143,7 @@ export class MusicPlayer {
   }
 
   public leave() {
-    this.audioPlayer.stop();
+    this.audioPlayer?.stop();
     getVoiceConnection(this.guildId)?.destroy();
     delete musicPlayerRegistry[this.guildId];
   }

@@ -55,6 +55,14 @@ export class Playlist {
     return this.tracks.map((track) => track.clone());
   }
 
+  public totalDuration(): number {
+    let durationInSec = 0;
+    for (const track of this.tracks) {
+      durationInSec += track.info.duration;
+    }
+    return durationInSec;
+  }
+
   private indexInBounds(index: number): boolean {
     return index >= 0 && index < this.tracks.length;
   }
