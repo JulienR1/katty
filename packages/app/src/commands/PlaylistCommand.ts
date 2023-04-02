@@ -3,8 +3,11 @@ import {
   AutocompleteInteraction,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
+import { SuccessEmbed } from "../embeds/SuccessEmbed";
+import { formatOrdinalNumber, formatTitle } from "../embeds/utils/formatters";
+import { respond } from "../embeds/utils/responses";
 import { MusicPlayer } from "../music/MusicPlayer";
-import { acknowledge, refuse } from "../responses";
+import { refuse } from "../responses";
 
 const baseMoveSubcommand = (
   subcommand: SlashCommandSubcommandBuilder,
@@ -119,18 +122,18 @@ export class PlaylistCommand {
     interaction: HandleCommandParams["interaction"],
     musicPlayer: MusicPlayer
   ) {
-    const reply = await acknowledge(interaction);
+    const response = await respond(interaction).acknowledge("Shuffling..");
     musicPlayer.playlist.shuffle();
-    await reply.edit("Shuffled the playlist.");
+    await response.edit(new SuccessEmbed().setTitle("Shuffled the playlist."));
   }
 
   private async clear(
     interaction: HandleCommandParams["interaction"],
     musicPlayer: MusicPlayer
   ) {
-    const reply = await acknowledge(interaction);
+    const response = await respond(interaction).acknowledge("Clearing..");
     musicPlayer.playlist.clear();
-    await reply.edit("Cleared the playlist.");
+    await response.edit(new SuccessEmbed().setTitle("Cleared the playlist."));
   }
 
   private async remove(
@@ -142,13 +145,20 @@ export class PlaylistCommand {
 
     const trackIndex = parseInt(track);
     if (isNaN(trackIndex) || trackIndex < 1 || trackIndex >= tracks.length) {
-      return await refuse(interaction, "invalid-params");
+      return await respond(interaction).refuse("Invalid params");
     }
 
-    const reply = await acknowledge(interaction);
+    const response = await respond(interaction).acknowledge(
+      `Removing "${formatTitle(tracks[trackIndex].info.title, 14)}"...`
+    );
     musicPlayer.playlist.remove(trackIndex);
-    await reply.edit(
-      `Removed "${tracks[trackIndex].info.title}" from the playlist.`
+    await response.edit(
+      new SuccessEmbed().setTitle(
+        `Removed "${formatTitle(
+          tracks[trackIndex].info.title,
+          30
+        )}" from the playlist.`
+      )
     );
   }
 
@@ -173,10 +183,33 @@ export class PlaylistCommand {
       trackIndex >= trackCount ||
       position >= trackCount
     ) {
-      return await refuse(interaction, "invalid-params");
+      return await respond(interaction).refuse("Invalid params");
     }
 
-    await acknowledge(interaction);
-    musicPlayer.playlist.move(trackIndex, position);
+    const targetTrack = musicPlayer.playlist.at(trackIndex);
+    if (!targetTrack.isOk()) {
+      await respond(interaction).refuse("Something went wrong..");
+    } else {
+      const trackTitle = targetTrack.value.info.title;
+      const newPositionStr = formatOrdinalNumber(position);
+
+      const response = await respond(interaction).acknowledge(
+        `Moving "${formatTitle(
+          trackTitle,
+          45
+        )}" to be ${newPositionStr} in the queue.`
+      );
+
+      musicPlayer.playlist.move(trackIndex, position);
+
+      await response.edit(
+        new SuccessEmbed().setTitle(
+          `"${formatTitle(
+            trackTitle,
+            30
+          )}" is now ${newPositionStr} in the queue.`
+        )
+      );
+    }
   }
 }

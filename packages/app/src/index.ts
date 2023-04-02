@@ -26,7 +26,11 @@ client.on("interactionCreate", async (interaction) => {
   const autocomplete = getAutocomplete(interaction);
 
   if (autocomplete) {
-    autocomplete();
+    try {
+      autocomplete();
+    } catch (ex) {
+      console.error(ex);
+    }
   } else if (handle) {
     const voiceChannel =
       interaction.member instanceof GuildMember

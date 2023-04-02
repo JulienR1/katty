@@ -13,6 +13,21 @@ const trimStringToLength = (str: string, maxLength: number) => {
 export const formatTime = (seconds: number) =>
   new Date(seconds * 1000).toISOString().slice(11, 19);
 
+export const formatOrdinalNumber = (num: number) => {
+  const pr = new Intl.PluralRules("en-US", { type: "ordinal" });
+
+  const suffixes = new Map([
+    ["one", "st"],
+    ["two", "nd"],
+    ["few", "rd"],
+    ["other", "th"],
+  ]);
+
+  const rule = pr.select(num);
+  const suffix = suffixes.get(rule);
+  return `${num}${suffix}`;
+};
+
 export const formatTitle = (title: string, extraCharCount = 0) => {
   const maxTitleLength = EMBED_TITLE_MAX_LENGTH - extraCharCount;
   return trimStringToLength(title, maxTitleLength);
