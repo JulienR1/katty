@@ -5,7 +5,8 @@ import {
   updateSlashCommands,
 } from "discord-command-handler";
 import { PermissionFlagsBits } from "discord.js";
-import { acknowledge, refuse } from "../responses";
+import { SuccessEmbed } from "../embeds/SuccessEmbed";
+import { respond } from "../embeds/utils/responses";
 
 @DiscordCommand({
   name: "reload",
@@ -16,7 +17,7 @@ import { acknowledge, refuse } from "../responses";
 export class ReloadCommand {
   public async handle({ interaction }: HandleCommandParams) {
     if (!interaction.guildId) {
-      await refuse(interaction, "no-guild");
+      return await respond(interaction).refuse("Guild not found");
     }
 
     const commandInput = interaction.options.getString("command");
@@ -30,10 +31,9 @@ export class ReloadCommand {
       (command) => updateEveryCommand || command.name === commandInput
     );
 
-    const editReply = await acknowledge(interaction);
-    await editReply.edit(
+    const response = await respond(interaction).acknowledge(
       `Updating ${commandsToUpdate.length} application (/) command${
-        commandsToUpdate.length > 1 ? "s" : ""
+        commandsToUpdate.length !== 1 ? "s" : ""
       }`
     );
 
@@ -44,10 +44,12 @@ export class ReloadCommand {
       process.env.DISCORD_TOKEN ?? ""
     );
 
-    await editReply.edit(
-      `Updated ${commandsToUpdate.length} application (/) command${
-        commandsToUpdate.length > 1 ? "s" : ""
-      }`
+    await response.edit(
+      new SuccessEmbed().setTitle(
+        `Updated ${commandsToUpdate.length} application (/) command${
+          commandsToUpdate.length > 1 ? "s" : ""
+        }`
+      )
     );
   }
 }

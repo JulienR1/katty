@@ -7,7 +7,11 @@ import { LostTravolta } from "./utils/attachments";
 import { formatFooter, formatTime, formatTitle } from "./utils/formatters";
 
 export class TrackInfoEmbed extends SuccessEmbed {
-  public constructor(trackInfo: TrackInfo, playlist: Playlist, query: string) {
+  public constructor(
+    trackInfo: TrackInfo,
+    playlist: Playlist,
+    query: string | null
+  ) {
     super();
 
     const [travolta, travoltaURL] = LostTravolta();
@@ -15,7 +19,10 @@ export class TrackInfoEmbed extends SuccessEmbed {
     const formatter = new Intl.NumberFormat("en-CA", { notation: "compact" });
 
     const duration = formatTime(trackInfo.duration);
-    const playlistDuration = playlist.totalDuration();
+    const playlistDuration = Math.max(
+      0,
+      playlist.totalDuration() - trackInfo.duration
+    );
     const timeToPlay =
       playlistDuration === 0 ? "now" : `in ${formatTime(playlistDuration)}`;
 
@@ -25,9 +32,11 @@ export class TrackInfoEmbed extends SuccessEmbed {
     this.setURL(trackInfo.url);
     this.setFooter({
       text: `Scheduled to play ${timeToPlay} • ${
-        isUrl(query)
-          ? `Added with url`
-          : `Added with query: "${formatFooter(query, 70)}" `
+        query
+          ? isUrl(query)
+            ? `Added with url`
+            : `Added with query: "${formatFooter(query, 70)}" `
+          : "Added automatically"
       }`,
     });
     this.setFields([
