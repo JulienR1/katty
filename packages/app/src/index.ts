@@ -22,6 +22,10 @@ client.on("ready", async (e) => {
 });
 
 client.on("interactionCreate", async (interaction) => {
+  if (interaction.isButton()) {
+    return;
+  }
+
   const handle = getCommandHandler(interaction);
   const autocomplete = getAutocomplete(interaction);
 

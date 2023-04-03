@@ -7,7 +7,6 @@ import { SuccessEmbed } from "../embeds/SuccessEmbed";
 import { formatOrdinalNumber, formatTitle } from "../embeds/utils/formatters";
 import { respond } from "../embeds/utils/responses";
 import { MusicPlayer } from "../music/MusicPlayer";
-import { refuse } from "../responses";
 
 const baseMoveSubcommand = (
   subcommand: SlashCommandSubcommandBuilder,
@@ -114,7 +113,7 @@ export class PlaylistCommand {
       case "promote":
         return this.move(interaction, musicPlayer);
       default:
-        await refuse(interaction, "invalid-params");
+        await respond(interaction).refuse("Invalid params");
     }
   }
 

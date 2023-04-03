@@ -7,13 +7,18 @@ export const respond = (interaction: ChatInputCommandInteraction) => {
   return {
     acknowledge: async (message: string, { hide } = { hide: false }) => {
       const embed = new LoadingEmbed().setTitle(message);
-      await interaction.reply({ embeds: [embed], ephemeral: hide });
+      const sentMessage = await interaction.reply({
+        embeds: [embed],
+        ephemeral: hide,
+      });
 
       return {
+        message: sentMessage,
         edit: (editEmbed: CustomEmbedBuilder) =>
           interaction.editReply({
             embeds: [editEmbed],
             files: editEmbed.files,
+            components: editEmbed.components,
           }),
       };
     },
