@@ -15,7 +15,8 @@ export class PlaylistInfoEmbed extends SuccessEmbed {
 
     const formatter = new Intl.NumberFormat("en-CA", { notation: "compact" });
 
-    const activePlaylistDuration = activePlaylist.totalDuration();
+    const activePlaylistDuration =
+      activePlaylist.totalDuration() - playlistInfo.duration;
     const timeToPlay =
       activePlaylistDuration === 0
         ? "now"

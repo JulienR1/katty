@@ -42,7 +42,11 @@ export class Playlist {
   }
 
   public clear(): Result<Playlist> {
-    this.tracks = [];
+    if (this.tracks.length >= 1) {
+      this.tracks = [this.tracks[0]];
+    } else {
+      this.tracks = [];
+    }
     return ok(this);
   }
 
