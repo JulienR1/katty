@@ -37,7 +37,9 @@ client.on("messageCreate", async (message) => {
   if (command.startsWith("play ")) {
     const content = command.slice(5);
 
-    await message.author.send(`Mauvaise commande! Utilise '/play ${content}'`);
+    await message.author.send(
+      `Mauvaise commande! Utilise \`/play ${content}\``
+    );
     handleInteraction(
       new MockInteraction("play", message.member, content, message) as any
     );
