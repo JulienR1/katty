@@ -20,7 +20,7 @@
     "dotenv": "^10.0.0",
     "ffmpeg-static": "^4.4.0",
     "libsodium-wrappers": "^0.7.11",
-    "play-dl": "^1.9.6",
+    "play-dl": "^1.9.7",
     "zod": "^3.20.6"
   },
   "devDependencies": {
