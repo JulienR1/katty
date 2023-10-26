@@ -1,17 +1,7 @@
 import "./commands";
 
-import {
-  getAutocomplete,
-  getCommandHandler,
-  getSlashCommands,
-} from "discord-command-handler";
-import {
-  CacheType,
-  ChatInputCommandInteraction,
-  Client,
-  GuildMember,
-  Interaction,
-} from "discord.js";
+import { getAutocomplete, getCommandHandler, getSlashCommands } from "discord-command-handler";
+import { CacheType, ChatInputCommandInteraction, Client, GuildMember, Interaction } from "discord.js";
 import { setup } from "./configuration/env";
 import { respond } from "./embeds/utils/responses";
 import { MusicPlayer } from "./music/MusicPlayer";
@@ -37,12 +27,11 @@ client.on("messageCreate", async (message) => {
   if (command.startsWith("play ")) {
     const content = command.slice(5);
 
-    await message.author.send(
-      `Mauvaise commande! Utilise \`/play ${content}\``
-    );
-    handleInteraction(
-      new MockInteraction("play", message.member, content, message) as any
-    );
+    await message.author.send(`Mauvaise commande! Utilise \`/play ${content}\``);
+    handleInteraction(new MockInteraction("play", message.member, content, message) as any);
+  } else if (command.startsWith("reload ")) {
+    const content = command.slice(7);
+    handleInteraction(new MockInteraction("reload", message.member, content, message) as any);
   }
 });
 
@@ -60,24 +49,15 @@ async function handleInteraction(interaction: Interaction<CacheType>) {
     if (autocomplete) {
       autocomplete();
     } else if (handle) {
-      const voiceChannel =
-        interaction.member instanceof GuildMember
-          ? interaction.member.voice.channel
-          : null;
+      const voiceChannel = interaction.member instanceof GuildMember ? interaction.member.voice.channel : null;
 
       if (voiceChannel) {
         handle({ voiceChannel });
       } else {
-        await respond(interaction as ChatInputCommandInteraction).refuse(
-          "You must be connected to a voice channel.",
-          { hide: true }
-        );
+        await respond(interaction as ChatInputCommandInteraction).refuse("You must be connected to a voice channel.", { hide: true });
       }
     } else {
-      console.log(
-        "Could not find a command associated with this interaction.",
-        interaction.toString()
-      );
+      console.log("Could not find a command associated with this interaction.", interaction.toString());
     }
   } catch (ex) {
     console.error(ex);
