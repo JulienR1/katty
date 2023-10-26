@@ -7,6 +7,7 @@ import {
 } from "discord.js";
 
 export class MockInteraction {
+  public guildId: string |null= null 
   private repliedMessage: Message<boolean> | null;
 
   public options = {
@@ -20,6 +21,7 @@ export class MockInteraction {
     private message: Message<boolean>
   ) {
     this.repliedMessage = null;
+    this.guildId = member?.guild.id ?? null
   }
 
   public async reply(params: string | MessagePayload | MessageReplyOptions) {
@@ -46,4 +48,5 @@ export class MockInteraction {
   public isAutocomplete() {
     return false;
   }
+
 }
