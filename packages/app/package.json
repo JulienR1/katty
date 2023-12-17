@@ -1,6 +1,6 @@
 {
   "name": "katty",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "description": "Katty will sing for us in our discord channels.",
   "main": "index.js",
   "scripts": {
