@@ -7,3 +7,4 @@ import "./PlaylistCommand";
 import "./QueueCommand";
 import "./ReloadCommand";
 import "./SkipCommand";
+import "./BabeCommand"

@@ -1,73 +1,69 @@
 import { err, ok, Result } from "../types/Result";
 import { Track } from "./Track";
+import { shuffle as shuffleArray } from "../utils/shuffle"
 
 export class Playlist {
-  private tracks: Track[] = [];
+    private tracks: Track[] = [];
 
-  public add(...tracks: Track[]): Result<Playlist> {
-    this.tracks.push(...tracks);
-    return ok(this);
-  }
-
-  public move(trackIndex: number, targetIndex: number): Result<Playlist> {
-    if (!this.indexInBounds(trackIndex) || !this.indexInBounds(targetIndex)) {
-      return err("Index out of bounds.");
+    public add(...tracks: Track[]): Result<Playlist> {
+        this.tracks.push(...tracks);
+        return ok(this);
     }
 
-    if (trackIndex !== targetIndex) {
-      const trackToMove = this.tracks[trackIndex];
-      this.tracks.splice(trackIndex, 1);
-      this.tracks.splice(targetIndex, 0, trackToMove);
+    public move(trackIndex: number, targetIndex: number): Result<Playlist> {
+        if (!this.indexInBounds(trackIndex) || !this.indexInBounds(targetIndex)) {
+            return err("Index out of bounds.");
+        }
+
+        if (trackIndex !== targetIndex) {
+            const trackToMove = this.tracks[trackIndex];
+            this.tracks.splice(trackIndex, 1);
+            this.tracks.splice(targetIndex, 0, trackToMove);
+        }
+
+        return ok(this);
     }
 
-    return ok(this);
-  }
-
-  public remove(trackIndex: number): Result<Playlist> {
-    if (!this.indexInBounds(trackIndex)) {
-      return err("Index out of bounds.");
+    public remove(trackIndex: number): Result<Playlist> {
+        if (!this.indexInBounds(trackIndex)) {
+            return err("Index out of bounds.");
+        }
+        this.tracks.splice(trackIndex, 1);
+        return ok(this);
     }
-    this.tracks.splice(trackIndex, 1);
-    return ok(this);
-  }
 
-  public shuffle(): Result<Playlist> {
-    for (let i = 1; i < this.tracks.length - 1; i++) {
-      const j = Math.floor(Math.random() * (this.tracks.length - i) + i);
-      const tempTrack = this.tracks[i];
-      this.tracks[i] = this.tracks[j];
-      this.tracks[j] = tempTrack;
+    public shuffle(): Result<Playlist> {
+        this.tracks = shuffleArray(this.tracks);
+        return ok(this);
     }
-    return ok(this);
-  }
 
-  public clear(): Result<Playlist> {
-    if (this.tracks.length >= 1) {
-      this.tracks = [this.tracks[0]];
-    } else {
-      this.tracks = [];
+    public clear(): Result<Playlist> {
+        if (this.tracks.length >= 1) {
+            this.tracks = [this.tracks[0]];
+        } else {
+            this.tracks = [];
+        }
+        return ok(this);
     }
-    return ok(this);
-  }
 
-  public at(index: number): Result<Track> {
-    const track = this.tracks[index]?.clone();
-    return track ? ok(track) : err("Track does not exist");
-  }
-
-  public getAll(): Track[] {
-    return this.tracks.map((track) => track.clone());
-  }
-
-  public totalDuration(): number {
-    let durationInSec = 0;
-    for (const track of this.tracks) {
-      durationInSec += track.info.duration;
+    public at(index: number): Result<Track> {
+        const track = this.tracks[index]?.clone();
+        return track ? ok(track) : err("Track does not exist");
     }
-    return durationInSec;
-  }
 
-  private indexInBounds(index: number): boolean {
-    return index >= 0 && index < this.tracks.length;
-  }
+    public getAll(): Track[] {
+        return this.tracks.map((track) => track.clone());
+    }
+
+    public totalDuration(): number {
+        let durationInSec = 0;
+        for (const track of this.tracks) {
+            durationInSec += track.info.duration;
+        }
+        return durationInSec;
+    }
+
+    private indexInBounds(index: number): boolean {
+        return index >= 0 && index < this.tracks.length;
+    }
 }

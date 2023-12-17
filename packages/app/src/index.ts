@@ -19,7 +19,7 @@ const client = new Client({
   intents: ["Guilds", "GuildVoiceStates", "GuildMessages", "MessageContent"],
 });
 
-client.on("ready", async (e) => {
+client.on("ready", async (_) => {
   getSlashCommands();
   console.log(`Logged in as ${client?.user?.tag}`);
 });
